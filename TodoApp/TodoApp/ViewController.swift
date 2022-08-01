@@ -9,7 +9,6 @@ import UIKit
 
 class ViewController: UIViewController {
 
-    
     private lazy var todoButton: UIButton = {
         let button = UIButton()
         button.backgroundColor = .orange
@@ -25,6 +24,7 @@ class ViewController: UIViewController {
         let vc = UINavigationController(rootViewController: DetailsViewController())
         present(vc, animated: true, completion: nil)
     }
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         view.backgroundColor = .white
@@ -34,7 +34,5 @@ class ViewController: UIViewController {
         
         
     }
-
-
 }
 
