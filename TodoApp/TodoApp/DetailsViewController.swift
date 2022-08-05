@@ -9,6 +9,8 @@ import UIKit
 
 class DetailsViewController: UIViewController, UITextViewDelegate {
     
+    var toDoItem = fileCache.todoItems["12"]!
+    
     private func configureNavbar() {
         navigationItem.title = "Задание"
         navigationItem.leftBarButtonItem = UIBarButtonItem(title: "Отменить", style: .done, target: self, action: nil)
@@ -46,16 +48,11 @@ class DetailsViewController: UIViewController, UITextViewDelegate {
         stackView.layoutMargins = UIEdgeInsets(top: 20, left: 20, bottom: 20, right: 20)
         
         stackView.addArrangedSubview(importanceView)
-        //        let separator = UIView()
-        //
-        //
-        //        separator.backgroundColor = .black
+        let separator = UIView(frame: CGRect(x: 0, y: 0, width: 50, height: 5))
+        separator.backgroundColor = .black
         stackView.addArrangedSubview(separator)
         
         stackView.addArrangedSubview(deadlineView)
-        
-        
-        
         
         stackView.translatesAutoresizingMaskIntoConstraints = false
         return stackView
@@ -63,11 +60,14 @@ class DetailsViewController: UIViewController, UITextViewDelegate {
     
     lazy var textView: UITextView = {
         let textView = UITextView()
+        textView.text = toDoItem.text
+        textView.font = UIFont.systemFont(ofSize: 17)
         textView.layer.cornerRadius = 16
         textView.backgroundColor = .white
         textView.isScrollEnabled = false
         textView.delegate = self
         textView.translatesAutoresizingMaskIntoConstraints = false
+   
         return textView
     }()
     
@@ -186,14 +186,16 @@ class DetailsViewController: UIViewController, UITextViewDelegate {
         tap.cancelsTouchesInView = false
         view.addGestureRecognizer(tap)
         
+        
+        
     }
     
     func configureConstraints() {
         
         scrollView.topAnchor.constraint(equalTo: view.topAnchor).isActive = true
         scrollView.bottomAnchor.constraint(equalTo: view.bottomAnchor).isActive = true
-        scrollView.leadingAnchor.constraint(equalTo: view.leadingAnchor).isActive = true
-        scrollView.trailingAnchor.constraint(equalTo: view.trailingAnchor).isActive = true
+        scrollView.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor).isActive = true
+        scrollView.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor).isActive = true
         
         
         scrollView.alwaysBounceVertical = true
@@ -206,11 +208,11 @@ class DetailsViewController: UIViewController, UITextViewDelegate {
         backgroundView.widthAnchor.constraint(equalTo: scrollView.widthAnchor).isActive = true
         backgroundView.bottomAnchor.constraint(equalTo: scrollView.bottomAnchor).isActive = true
         
-        textView.topAnchor.constraint(equalTo: backgroundView.topAnchor, constant: 72).isActive = true
+        textView.topAnchor.constraint(equalTo: backgroundView.topAnchor, constant: 16).isActive = true
         textView.leadingAnchor.constraint(equalTo: backgroundView.leadingAnchor, constant: 16).isActive = true
         textView.trailingAnchor.constraint(equalTo: backgroundView.trailingAnchor, constant: -16).isActive = true
-        textView.widthAnchor.constraint(equalTo: backgroundView.widthAnchor).isActive = true
-        textView.heightAnchor.constraint(equalToConstant: 120).isActive = true
+        textView.widthAnchor.constraint(equalTo: backgroundView.widthAnchor, constant: -32).isActive = true
+        textViewDidChange(textView)
         
         stackView.topAnchor.constraint(equalTo: textView.bottomAnchor, constant: 16).isActive = true
         stackView.leadingAnchor.constraint(equalTo: backgroundView.leadingAnchor, constant: 16).isActive = true
@@ -218,6 +220,7 @@ class DetailsViewController: UIViewController, UITextViewDelegate {
         
         deleteButton.topAnchor.constraint(equalTo: stackView.bottomAnchor, constant: 16).isActive = true
         deleteButton.leadingAnchor.constraint(equalTo: scrollView.leadingAnchor, constant: 16).isActive = true
+        deleteButton.heightAnchor.constraint(equalToConstant: 56).isActive = true
         deleteButton.trailingAnchor.constraint(equalTo: scrollView.trailingAnchor, constant: -16).isActive = true
         
     }
