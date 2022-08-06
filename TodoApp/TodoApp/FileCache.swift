@@ -1,8 +1,8 @@
 import Foundation
 
 
-class FileCache {
-    public var todoItems: [String: TodoItem] = [:]
+final class FileCache {
+    private(set) var todoItems: [String: TodoItem] = [:]
     
     func add(_ item: TodoItem) {
         todoItems[item.id] = item
