@@ -3,7 +3,7 @@ import UIKit
 enum ColorPalette {
     case backPrimary, backSecondary, elevated, iOSPrimary, blue, gray, grayLight, green, red, white, disable, labelPrimary, labelSecondary, tertiary, navbarBlur, overlay, separator
     
-    var value: UIColor {
+    var color: UIColor {
         get {
             switch self {
             case .backPrimary: return UIColor(named: "backPrimary")!

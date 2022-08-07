@@ -12,6 +12,10 @@ final class FileCache {
         todoItems.removeValue(forKey: itemID)
     }
     
+    var getArray: [TodoItem] {
+        Array(todoItems.values.sorted { $0.creationDate < $1.creationDate})
+    }
+    
     func save(to file: String) {
         guard let documentDirectory = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first else {
             return

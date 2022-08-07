@@ -18,9 +18,9 @@ struct TodoItem {
          text: String,
          importance: Importance = .basic,
          deadline: Date? = nil,
-         done: Bool,
+         done: Bool = false,
          color: String? = nil,
-         creationDate: Date,
+         creationDate: Date = Date(),
          changeDate: Date? = nil) {
         self.id = id
         self.text = text
