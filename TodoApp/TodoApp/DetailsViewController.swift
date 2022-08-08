@@ -6,27 +6,33 @@
 //
 
 import UIKit
-protocol DetailsViewControllerDelegate {
-    func ToDoItemCreated(model: TodoItem)
+protocol DetailsViewControllerDelegate: AnyObject {
+    func ToDoItemCreated(model: TodoItem, beingDeleted: Bool)
 }
 final class DetailsViewController: UIViewController, UITextViewDelegate {
     
-    var delegate: DetailsViewControllerDelegate?
+    weak var delegate: DetailsViewControllerDelegate?
+    var beingDeleted = false
     // MARK: -  Navitgation Bar
     private func configureNavbar() {
         navigationItem.title = "Задание"
-        let leftBarButton = UIBarButtonItem(title: "Отменить", style: .done, target: self, action: nil)
-        let rightBarButton = UIBarButtonItem(title: "Сохранить", style: .done, target: self, action: nil)
-        rightBarButton.isEnabled = false
-        rightBarButton.action = #selector(saveToDoItem)
+        let leftBarButton = UIBarButtonItem(title: "Отменить", style: .done, target: self, action: #selector(cancelCreationToDoItem))
+        let rightBarButton = UIBarButtonItem(title: "Сохранить", style: .done, target: self, action: #selector(saveToDoItem))
         navigationItem.leftBarButtonItem = leftBarButton
         navigationItem.rightBarButtonItem = rightBarButton
     }
     
     @objc func saveToDoItem() {
-        delegate?.ToDoItemCreated(model: model)
+        textViewDidEndEditing(textView)
+        delegate?.ToDoItemCreated(model: model, beingDeleted: beingDeleted)
+        
+        navigationController?.dismiss(animated: true)
+        
     }
     
+    @objc func cancelCreationToDoItem() {
+        navigationController?.dismiss(animated: true)
+    }
     lazy var scrollView: UIScrollView = {
         let scrollView = UIScrollView()
         scrollView.alwaysBounceVertical = true
@@ -56,6 +62,7 @@ final class DetailsViewController: UIViewController, UITextViewDelegate {
         return textView
     }()
     
+    
     func textViewDidChange(_ textView: UITextView) {
         if !textView.text.isEmpty {
             navigationItem.rightBarButtonItem?.isEnabled = true
@@ -63,8 +70,17 @@ final class DetailsViewController: UIViewController, UITextViewDelegate {
             navigationItem.rightBarButtonItem?.isEnabled = false
         }
     }
-    
+    func textViewDidBeginEditing(_ textView: UITextView) {
+        if textView.textColor == ColorPalette.tertiary.color {
+            textView.text = nil
+            textView.textColor = ColorPalette.labelPrimary.color
+        }
+    }
     func textViewDidEndEditing(_ textView: UITextView) {
+        if textView.text.isEmpty {
+            textView.text = "Что надо сделать?"
+            textView.textColor = ColorPalette.tertiary.color
+        }
         model = TodoItem(id: model.id,
                          text: textView.text,
                          importance: model.importance,
@@ -195,10 +211,22 @@ final class DetailsViewController: UIViewController, UITextViewDelegate {
         calendar.datePickerMode = .date
         calendar.preferredDatePickerStyle = .inline
         calendar.translatesAutoresizingMaskIntoConstraints = false
+        calendar.addTarget(self, action: #selector(dateChanged), for: .valueChanged)
         calendar.widthAnchor.constraint(equalToConstant: 343).isActive = true
         calendar.heightAnchor.constraint(equalToConstant: 332).isActive = true
         return calendar
     }()
+    
+    @objc func dateChanged() {
+        model = TodoItem(id: model.id,
+                         text: model.text,
+                         importance: model.importance,
+                         deadline: calendar.date,
+                         done: model.done,
+                         color: model.color,
+                         creationDate: model.creationDate,
+                         changeDate: model.changeDate)
+    }
     
     lazy var deleteButton: UIButton = {
         let button = UIButton()
@@ -208,10 +236,15 @@ final class DetailsViewController: UIViewController, UITextViewDelegate {
         
         
         button.setTitleColor(ColorPalette.red.color, for: .normal)
+        button.addTarget(self, action: #selector(deleteToDoItem), for: .touchDown)
         button.translatesAutoresizingMaskIntoConstraints = false
         return button
     }()
     
+    @objc func deleteToDoItem() {
+        delegate?.ToDoItemCreated(model: model, beingDeleted: true)
+        navigationController?.dismiss(animated: true)
+    }
     @objc func dismissKeyboard() {
         view.endEditing(true)
     }
@@ -233,9 +266,8 @@ final class DetailsViewController: UIViewController, UITextViewDelegate {
         
         backgroundView.addSubview(deleteButton)
         configureConstraints()
-        
-        
-        textView.text
+        textViewDidChange(textView)
+        textViewDidEndEditing(textView)
         
         
         let tap = UITapGestureRecognizer(target: self, action: #selector(UIInputViewController.dismissKeyboard))
@@ -247,7 +279,7 @@ final class DetailsViewController: UIViewController, UITextViewDelegate {
     
     func configureConstraints() {
         NSLayoutConstraint.activate([
-
+            
             scrollView.topAnchor.constraint(equalTo: view.topAnchor),
             scrollView.bottomAnchor.constraint(equalTo: view.bottomAnchor),
             scrollView.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor),
@@ -264,7 +296,7 @@ final class DetailsViewController: UIViewController, UITextViewDelegate {
             textView.leadingAnchor.constraint(equalTo: backgroundView.leadingAnchor, constant: 16),
             textView.trailingAnchor.constraint(equalTo: backgroundView.trailingAnchor, constant: -16),
             textView.widthAnchor.constraint(equalTo: backgroundView.widthAnchor, constant: -32),
-            textView.heightAnchor.constraint(greaterThanOrEqualToConstant: 40),
+            textView.heightAnchor.constraint(greaterThanOrEqualToConstant: 140),
             stackView.topAnchor.constraint(equalTo: textView.bottomAnchor, constant: 16),
             stackView.leadingAnchor.constraint(equalTo: backgroundView.leadingAnchor, constant: 16),
             stackView.trailingAnchor.constraint(equalTo: backgroundView.trailingAnchor, constant: -16),
@@ -295,10 +327,7 @@ private extension DetailsViewController {
         textView.text = text
     }
     func set(with deadline: Date?) {
-        guard let deadline = deadline else {
-            return
-        }
-
+        guard let deadline = deadline else { return }
+        calendar.date = deadline
     }
-    
 }

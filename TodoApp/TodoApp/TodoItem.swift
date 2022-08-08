@@ -39,7 +39,7 @@ extension TodoItem {
         
         guard let id = jsonObject["id"] as? String else { return nil }
         guard let text = jsonObject["text"] as? String else { return nil }
-        let importance = jsonObject["importance"] as? Importance ?? .basic
+        let importance = Importance(rawValue: jsonObject["importance"] as? String ?? "basic") ?? .basic
         var deadline: Date?
         if let doubleDeadline = jsonObject["deadline"] as? Double {
             deadline = Date(timeIntervalSince1970: doubleDeadline)

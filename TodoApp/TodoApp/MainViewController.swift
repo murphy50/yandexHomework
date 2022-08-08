@@ -1,6 +1,6 @@
 import UIKit
 
-class MainViewController: UIViewController, UINavigationControllerDelegate {
+class MainViewController: UIViewController{
     
     func updateModel() {
         toDoItems = Array(fileCache.todoItems.values.sorted { $0.creationDate < $1.creationDate})
@@ -10,14 +10,14 @@ class MainViewController: UIViewController, UINavigationControllerDelegate {
     
     private let mainTable: UITableView = {
         let table = UITableView(frame: .zero, style: .insetGrouped)
-        table.backgroundColor = .yellow
-        table.layer.cornerRadius = 16
-
+        
+        table.layer.cornerRadius = 30
+        table.backgroundColor = ColorPalette.backPrimary.color
         table.register(MainTableViewCell.self, forCellReuseIdentifier: MainTableViewCell.identifier)
         table.translatesAutoresizingMaskIntoConstraints = false
         return table
     }()
-   
+    
     
     private func configureNavbar() {
         navigationController?.navigationBar.prefersLargeTitles = true
@@ -43,9 +43,9 @@ class MainViewController: UIViewController, UINavigationControllerDelegate {
         return button
     }()
     @objc func createNewItem() {
-        let vc = UINavigationController(rootViewController: DetailsViewController(with: TodoItem(text: "")))
+        let vc = DetailsViewController(with: TodoItem(text: ""))
         vc.delegate = self
-        present(vc, animated: true)
+        present( UINavigationController(rootViewController: vc), animated: true)
     }
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -53,23 +53,24 @@ class MainViewController: UIViewController, UINavigationControllerDelegate {
         updateModel()
         configureNavbar()
         //let headerView = MainTableHeaderUIView()
-        
         view.backgroundColor = ColorPalette.backPrimary.color
         view.addSubview(mainTable)
         view.addSubview(addItemButton)
         //mainTable.tableHeaderView = headerView
         mainTable.delegate = self
         mainTable.dataSource = self
-       // mainTable.tableHeaderView = headerView
+        
+        
+        // mainTable.tableHeaderView = headerView
         NSLayoutConstraint.activate([
             addItemButton.centerXAnchor.constraint(equalTo: view.centerXAnchor),
             addItemButton.bottomAnchor.constraint(equalTo: view.bottomAnchor, constant: -41),
             addItemButton.widthAnchor.constraint(equalToConstant: 44),
             addItemButton.heightAnchor.constraint(equalToConstant: 44),
-//            headerView.topAnchor.constraint(equalTo: mainTable.topAnchor),
-//            headerView.leadingAnchor.constraint(equalTo: mainTable.leadingAnchor),
-//            headerView.trailingAnchor.constraint(equalTo: mainTable.trailingAnchor),
-//            mainTable.topAnchor.constraint(equalTo: view.bottomAnchor,constant: 50),
+            //            headerView.topAnchor.constraint(equalTo: mainTable.topAnchor),
+            //            headerView.leadingAnchor.constraint(equalTo: mainTable.leadingAnchor),
+            //            headerView.trailingAnchor.constraint(equalTo: mainTable.trailingAnchor),
+            //            mainTable.topAnchor.constraint(equalTo: view.bottomAnchor,constant: 50),
             mainTable.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
             mainTable.leftAnchor.constraint(equalTo: view.leftAnchor),
             mainTable.rightAnchor.constraint(equalTo: view.rightAnchor),
@@ -114,6 +115,14 @@ extension MainViewController: UITableViewDelegate, UITableViewDataSource {
         let swipe = UISwipeActionsConfiguration(actions: [delete, info])
         return swipe
     }
+    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        mainTable.deselectRow(at: indexPath, animated: true)
+        let vc = DetailsViewController(with: toDoItems[indexPath.row])
+        vc.delegate = self
+        //vc.modalTransitionStyle = UIModalTransitionStyle.partialCurl
+        // viewController.configure(with: model)
+        present(UINavigationController(rootViewController: vc), animated: true)
+    }
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         toDoItems.count
     }
@@ -125,15 +134,15 @@ extension MainViewController: UITableViewDelegate, UITableViewDataSource {
             return UITableViewCell()
         }
         cell.configure(with: toDoItems[indexPath.row])
-        cell.backgroundColor = .green
+        //cell.backgroundColor = ColorPalette.backSecondary.color
         
         return cell
     }
     func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
-
-            let view = MainTableHeaderUIView()
-          return view
-       }
+        
+        let view = MainTableHeaderUIView()
+        return view
+    }
     func tableView(_ tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
         60
     }
@@ -141,21 +150,31 @@ extension MainViewController: UITableViewDelegate, UITableViewDataSource {
 
 extension MainViewController: MainTableViewCellDelegate {
     func MainTableViewCellDidTapCell(_ cell: MainTableViewCell, model: TodoItem) {
-      //  DispatchQueue.main.async { [weak self] in
-            let vc = UINavigationController(rootViewController: DetailsViewController(with: model))
-           // viewController.configure(with: model)
-            present(vc, animated: true, completion: nil)
-            //self?.pushViewController(viewController, animated: true)
-       // }
+        //  DispatchQueue.main.async { [weak self] in
+        mainTable.indexPath(for: cell)
+        
+        let vc = DetailsViewController(with: model)
+        vc.delegate = self
+        // viewController.configure(with: model)
+        present(UINavigationController(rootViewController: vc), animated: true)
+        //self?.pushViewController(viewController, animated: true)
+        // }
     }
 }
 
 extension MainViewController: DetailsViewControllerDelegate {
-    func ToDoItemCreated(model: TodoItem) {
-        fileCache.add(model)
-        updateModel()
-        mainTable.reloadData()
+    func ToDoItemCreated(model: TodoItem, beingDeleted: Bool) {
+        if beingDeleted {
+            fileCache.delete(model.id)
+            updateModel()
+            mainTable.reloadData()
+        } else {
+            fileCache.add(model)
+            updateModel()
+            mainTable.reloadData()
+        }
     }
+    
 }
 
 extension MainViewController {
