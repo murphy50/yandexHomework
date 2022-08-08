@@ -1,12 +1,12 @@
 import UIKit
 
-class MainViewController: UIViewController{
+final class MainViewController: UIViewController {
     
-    func updateModel() {
+    private func updateModel() {
         toDoItems = Array(fileCache.todoItems.values.sorted { $0.creationDate < $1.creationDate})
     }
-    var fileCache = FileCache()
-    var toDoItems: [TodoItem] = []
+    private var fileCache = FileCache()
+    private var toDoItems: [TodoItem] = []
     
     private let mainTable: UITableView = {
         let table = UITableView(frame: .zero, style: .insetGrouped)
@@ -27,6 +27,7 @@ class MainViewController: UIViewController{
         navigationController?.navigationBar.largeTitleTextAttributes = attrs
         title = "Мои дела"
     }
+    
     private lazy var addItemButton: UIButton = {
         let button = UIButton()
         button.layer.cornerRadius = 22
@@ -115,14 +116,24 @@ extension MainViewController: UITableViewDelegate, UITableViewDataSource {
         let swipe = UISwipeActionsConfiguration(actions: [delete, info])
         return swipe
     }
+    
+    
+    func tableView(_ tableView: UITableView, contextMenuConfigurationForRowAt indexPath: IndexPath, point: CGPoint) -> UIContextMenuConfiguration? {
+        UIContextMenuConfiguration(identifier: nil) {
+            let vc = DetailsViewController(with: self.toDoItems[indexPath.row])
+            vc.delegate = self
+            return vc
+        }
+    }
+    
+    // MARK: - settings for didSelectRow -
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         mainTable.deselectRow(at: indexPath, animated: true)
         let vc = DetailsViewController(with: toDoItems[indexPath.row])
         vc.delegate = self
-        //vc.modalTransitionStyle = UIModalTransitionStyle.partialCurl
-        // viewController.configure(with: model)
         present(UINavigationController(rootViewController: vc), animated: true)
     }
+    
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         toDoItems.count
     }
@@ -134,13 +145,10 @@ extension MainViewController: UITableViewDelegate, UITableViewDataSource {
             return UITableViewCell()
         }
         cell.configure(with: toDoItems[indexPath.row])
-        //cell.backgroundColor = ColorPalette.backSecondary.color
-        
         return cell
     }
     func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
-        
-        let view = MainTableHeaderUIView()
+        let view = MainTableHeaderView()
         return view
     }
     func tableView(_ tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
@@ -148,19 +156,7 @@ extension MainViewController: UITableViewDelegate, UITableViewDataSource {
     }
 }
 
-extension MainViewController: MainTableViewCellDelegate {
-    func MainTableViewCellDidTapCell(_ cell: MainTableViewCell, model: TodoItem) {
-        //  DispatchQueue.main.async { [weak self] in
-        mainTable.indexPath(for: cell)
-        
-        let vc = DetailsViewController(with: model)
-        vc.delegate = self
-        // viewController.configure(with: model)
-        present(UINavigationController(rootViewController: vc), animated: true)
-        //self?.pushViewController(viewController, animated: true)
-        // }
-    }
-}
+
 
 extension MainViewController: DetailsViewControllerDelegate {
     func ToDoItemCreated(model: TodoItem, beingDeleted: Bool) {
@@ -202,3 +198,40 @@ extension MainViewController {
         }
     }
 }
+//
+//extension MainViewController: UIViewControllerTransitioningDelegate {
+//    func animationController(forDismissed dismissed: UIViewController) -> UIViewControllerAnimatedTransitioning? {
+//        nil
+//    }
+//    func animationController(forPresented presented: UIViewController, presenting: UIViewController, source: UIViewController) -> UIViewControllerAnimatedTransitioning? {
+//        PresentAnimator()
+//    }
+//}
+
+//class PresentAnimator: NSObject, UIViewControllerAnimatedTransitioning {
+//    func transitionDuration(using transitionContext: UIViewControllerContextTransitioning?) -> TimeInterval {
+//        0.5
+//    }
+//
+//    func animateTransition(using transitionContext: UIViewControllerContextTransitioning) {
+//        guard
+//         //   let rectOfCell = MainViewController.mainTable.rectForRowAtIndexPath(0),
+//           // let rectOfCellInSuperview = tableView.convertRect(rectOfCell, toView: tableView.superview),
+//            let fromViewController = (transitionContext.viewController(forKey: .from) as? UINavigationController)?.topViewController as? MainViewController,
+//            //let cellImageView = MainTableViewCell.frame,
+//            let toView = transitionContext.view(forKey: .to),
+//            let fromView = transitionContext.view(forKey: .from)
+//        else { return }
+//        let startFrame = CGRect(x: 20, y: 271, width: 388, height: 109)//cellImageView.superview?.convert(MainTableViewCell.frame, to: nil)
+//
+//
+//
+//        toView.frame = startFrame
+//
+//        let containerView = transitionContext.containerView
+//        containerView.addSubview(toView)
+//
+//    }
+//
+//
+//}

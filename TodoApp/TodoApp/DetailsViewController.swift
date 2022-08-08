@@ -1,19 +1,26 @@
-//
-//  DetailsViewController.swift
-//  TodoApp
-//
-//  Created by murphy on 7/31/22.
-//
-
 import UIKit
+
+
+// MARK: - DetailsVCDelegate
+
 protocol DetailsViewControllerDelegate: AnyObject {
     func ToDoItemCreated(model: TodoItem, beingDeleted: Bool)
 }
+
 final class DetailsViewController: UIViewController, UITextViewDelegate {
+    
+    
+    // MARK: - Public properties
     
     weak var delegate: DetailsViewControllerDelegate?
     var beingDeleted = false
+    
+    // MARK: - Private properties
+    
+    private var model: TodoItem
+    
     // MARK: -  Navitgation Bar
+    
     private func configureNavbar() {
         navigationItem.title = "Задание"
         let leftBarButton = UIBarButtonItem(title: "Отменить", style: .done, target: self, action: #selector(cancelCreationToDoItem))
@@ -25,7 +32,6 @@ final class DetailsViewController: UIViewController, UITextViewDelegate {
     @objc func saveToDoItem() {
         textViewDidEndEditing(textView)
         delegate?.ToDoItemCreated(model: model, beingDeleted: beingDeleted)
-        
         navigationController?.dismiss(animated: true)
         
     }
@@ -33,23 +39,11 @@ final class DetailsViewController: UIViewController, UITextViewDelegate {
     @objc func cancelCreationToDoItem() {
         navigationController?.dismiss(animated: true)
     }
-    lazy var scrollView: UIScrollView = {
-        let scrollView = UIScrollView()
-        scrollView.alwaysBounceVertical = true
-        scrollView.backgroundColor = ColorPalette.backPrimary.color
-        scrollView.translatesAutoresizingMaskIntoConstraints = false
-        return scrollView
-    }()
     
-    lazy var backgroundView: UIView = {
-        let backgroundView = UIView()
-        backgroundView.backgroundColor = ColorPalette.backPrimary.color
-        backgroundView.translatesAutoresizingMaskIntoConstraints = false
-        return backgroundView
-    }()
     
-    // MARK: - TextView & textView methods
-    lazy var textView: UITextView = {
+    
+    // MARK: - TextView
+    private lazy var textView: UITextView = {
         let textView = UITextView()
         textView.font = UIFont.systemFont(ofSize: 17)
         textView.textContainerInset = UIEdgeInsets(top: 17, left: 16, bottom: 12, right: 16)
@@ -62,7 +56,6 @@ final class DetailsViewController: UIViewController, UITextViewDelegate {
         return textView
     }()
     
-    
     func textViewDidChange(_ textView: UITextView) {
         if !textView.text.isEmpty {
             navigationItem.rightBarButtonItem?.isEnabled = true
@@ -70,12 +63,14 @@ final class DetailsViewController: UIViewController, UITextViewDelegate {
             navigationItem.rightBarButtonItem?.isEnabled = false
         }
     }
+    
     func textViewDidBeginEditing(_ textView: UITextView) {
         if textView.textColor == ColorPalette.tertiary.color {
             textView.text = nil
             textView.textColor = ColorPalette.labelPrimary.color
         }
     }
+    
     func textViewDidEndEditing(_ textView: UITextView) {
         if textView.text.isEmpty {
             textView.text = "Что надо сделать?"
@@ -96,11 +91,29 @@ final class DetailsViewController: UIViewController, UITextViewDelegate {
             scrollView.contentInset = .init(top: 0, left: 0, bottom: keyboardSize.height, right: 0)
         }
     }
+    
     @objc private func onKeyboardDisappear(_ notification: Notification) {
         scrollView.contentInset = .init(top: 0, left: 0, bottom: 0, right: 0)
     }
     
-    lazy var stackView: UIStackView = {
+    // MARK: - Views
+    
+    private lazy var scrollView: UIScrollView = {
+        let scrollView = UIScrollView()
+        scrollView.alwaysBounceVertical = true
+        scrollView.backgroundColor = ColorPalette.backPrimary.color
+        scrollView.translatesAutoresizingMaskIntoConstraints = false
+        return scrollView
+    }()
+    
+    private lazy var backgroundView: UIView = {
+        let backgroundView = UIView()
+        backgroundView.backgroundColor = ColorPalette.backPrimary.color
+        backgroundView.translatesAutoresizingMaskIntoConstraints = false
+        return backgroundView
+    }()
+    
+    private lazy var stackView: UIStackView = {
         let stackView = UIStackView()
         stackView.axis = .vertical
         stackView.backgroundColor = ColorPalette.backSecondary.color
@@ -126,47 +139,26 @@ final class DetailsViewController: UIViewController, UITextViewDelegate {
         return stackView
     }()
     
-    private var model: TodoItem
-    
-    func configure(with model: TodoItem) {
-        set(with: model.importance)
-        set(with: model.text)
-        set(with: model.deadline)
-    }
-    
-    init(with model: TodoItem)   {
-        self.model = model
-        super.init(nibName: nil, bundle: nil)
-        configure(with: model)
-    }
-    
-    required init?(coder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
-    }
-    
-    lazy var segmentedControl: UISegmentedControl = {
+    private lazy var segmentedControl: UISegmentedControl = {
         let segmentedControl = UISegmentedControl(items: [
             UIImage(systemName: "arrow.down")!,
             "Нет",
             UIImage(systemName: "exclamationmark.2")!.withTintColor(ColorPalette.red.color, renderingMode: .alwaysOriginal),
         ])
         segmentedControl.selectedSegmentIndex = 1
-        
         return segmentedControl
     }()
     
     
-    lazy var importanceView: UIView = {
+    private lazy var importanceView: UIView = {
         let stackView = UIStackView()
         stackView.axis = .horizontal
         let label = UILabel()
         label.text = "Важность"
-        
         stackView.addArrangedSubview(label)
         stackView.addArrangedSubview(segmentedControl)
         stackView.translatesAutoresizingMaskIntoConstraints = false
         segmentedControl.widthAnchor.constraint(equalToConstant: 150).isActive = true
-        
         return stackView
     }()
     
@@ -184,7 +176,7 @@ final class DetailsViewController: UIViewController, UITextViewDelegate {
             })
         }
     }
-    lazy var deadlineView: UIView = {
+    private lazy var deadlineView: UIView = {
         let stackView = UIStackView()
         stackView.axis = .horizontal
         
@@ -206,7 +198,7 @@ final class DetailsViewController: UIViewController, UITextViewDelegate {
     }()
     
     
-    lazy var calendar: UIDatePicker = {
+    private lazy var calendar: UIDatePicker = {
         let calendar = UIDatePicker()
         calendar.datePickerMode = .date
         calendar.preferredDatePickerStyle = .inline
@@ -228,7 +220,7 @@ final class DetailsViewController: UIViewController, UITextViewDelegate {
                          changeDate: model.changeDate)
     }
     
-    lazy var deleteButton: UIButton = {
+    private lazy var deleteButton: UIButton = {
         let button = UIButton()
         button.backgroundColor = ColorPalette.backSecondary.color
         button.setTitle("Удалить", for: .normal)
@@ -249,13 +241,34 @@ final class DetailsViewController: UIViewController, UITextViewDelegate {
         view.endEditing(true)
     }
     
+    private func configure(with model: TodoItem) {
+        set(with: model.importance)
+        set(with: model.text)
+        set(with: model.deadline)
+    }
+    
+    
+    // MARK: - Init
+    
+    init(with model: TodoItem)   {
+        self.model = model
+        super.init(nibName: nil, bundle: nil)
+        configure(with: model)
+        NotificationCenter.default.addObserver(self, selector: #selector(onKeyboardAppear), name: UIResponder.keyboardWillShowNotification, object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(onKeyboardDisappear), name: UIResponder.keyboardWillHideNotification, object: nil)
+    }
+    
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+    
+    deinit {
+        NotificationCenter.default.removeObserver(self)
+    }
+    
     //MARK: - viewDidLoad()
     
     override func viewDidLoad() {
-        NotificationCenter.default.addObserver(self, selector: #selector(onKeyboardAppear), name: UIResponder.keyboardWillShowNotification, object: nil)
-        NotificationCenter.default.addObserver(self, selector: #selector(onKeyboardDisappear), name: UIResponder.keyboardWillHideNotification, object: nil)
-        
-        
         super.viewDidLoad()
         configureNavbar()
         view.addSubview(scrollView)
@@ -273,7 +286,6 @@ final class DetailsViewController: UIViewController, UITextViewDelegate {
         let tap = UITapGestureRecognizer(target: self, action: #selector(UIInputViewController.dismissKeyboard))
         tap.cancelsTouchesInView = false
         view.addGestureRecognizer(tap)
-        
         
     }
     
