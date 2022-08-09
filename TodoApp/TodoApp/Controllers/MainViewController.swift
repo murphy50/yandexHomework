@@ -1,16 +1,16 @@
 import UIKit
+ var fileCache = FileCache()
 
 final class MainViewController: UIViewController {
     
-    private func updateModel() {
-        toDoItems = Array(fileCache.todoItems.values.sorted { $0.creationDate < $1.creationDate})
-    }
-    private var fileCache = FileCache()
-    private var toDoItems: [TodoItem] = []
     
-    private let mainTable: UITableView = {
+    // MARK: - Private properties
+
+    private var toDoItems: [TodoItem] = []
+    private var tapIndex: IndexPath?
+    
+    private lazy var mainTable: UITableView = {
         let table = UITableView(frame: .zero, style: .insetGrouped)
-        
         table.layer.cornerRadius = 30
         table.backgroundColor = ColorPalette.backPrimary.color
         table.register(MainTableViewCell.self, forCellReuseIdentifier: MainTableViewCell.identifier)
@@ -18,22 +18,11 @@ final class MainViewController: UIViewController {
         return table
     }()
     
-    
-    private func configureNavbar() {
-        navigationController?.navigationBar.prefersLargeTitles = true
-        let attrs = [
-            NSAttributedString.Key.foregroundColor: ColorPalette.labelPrimary.color,
-        ]
-        navigationController?.navigationBar.largeTitleTextAttributes = attrs
-        title = "Мои дела"
-    }
-    
     private lazy var addItemButton: UIButton = {
         let button = UIButton()
         button.layer.cornerRadius = 22
         button.backgroundColor = ColorPalette.blue.color
         let configuration = UIImage.SymbolConfiguration(pointSize: 30, weight: .semibold)
-        
         button.setImage(UIImage(systemName: "plus", withConfiguration: configuration), for: .normal)
         button.layer.shadowColor = ColorPalette.labelPrimary.color.cgColor
         button.layer.shadowOffset = CGSize(width: 5, height: 5)
@@ -43,14 +32,22 @@ final class MainViewController: UIViewController {
         button.translatesAutoresizingMaskIntoConstraints = false
         return button
     }()
+    
     @objc func createNewItem() {
         let vc = DetailsViewController(with: TodoItem(text: ""))
         vc.delegate = self
         present( UINavigationController(rootViewController: vc), animated: true)
     }
+    
+    // MARK: - viewDidLoad
+    
     override func viewDidLoad() {
         super.viewDidLoad()
-        loadTestFile()
+        if fileCache.isEmpty(file: "testTodoInput.json") ?? true {
+            fileCache.loadTestFile()
+        } else {
+            fileCache.load(from: "testTodoInput.json")
+        }
         updateModel()
         configureNavbar()
         //let headerView = MainTableHeaderUIView()
@@ -61,17 +58,12 @@ final class MainViewController: UIViewController {
         mainTable.delegate = self
         mainTable.dataSource = self
         
-        
-        // mainTable.tableHeaderView = headerView
         NSLayoutConstraint.activate([
             addItemButton.centerXAnchor.constraint(equalTo: view.centerXAnchor),
             addItemButton.bottomAnchor.constraint(equalTo: view.bottomAnchor, constant: -41),
             addItemButton.widthAnchor.constraint(equalToConstant: 44),
             addItemButton.heightAnchor.constraint(equalToConstant: 44),
-            //            headerView.topAnchor.constraint(equalTo: mainTable.topAnchor),
-            //            headerView.leadingAnchor.constraint(equalTo: mainTable.leadingAnchor),
-            //            headerView.trailingAnchor.constraint(equalTo: mainTable.trailingAnchor),
-            //            mainTable.topAnchor.constraint(equalTo: view.bottomAnchor,constant: 50),
+            
             mainTable.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
             mainTable.leftAnchor.constraint(equalTo: view.leftAnchor),
             mainTable.rightAnchor.constraint(equalTo: view.rightAnchor),
@@ -80,12 +72,17 @@ final class MainViewController: UIViewController {
     }
 }
 
+// MARK: - TableVDelegate DataSource
+
 extension MainViewController: UITableViewDelegate, UITableViewDataSource {
     private func delete(rowIndexPathAt indexPath: IndexPath) -> UIContextualAction {
         let action = UIContextualAction(style: .destructive, title: nil) { [weak self] _,_,_ in
-            self?.toDoItems.remove(at: indexPath.row)
-            self?.mainTable.deleteRows(at: [indexPath], with: .automatic)
+            guard let id = self?.toDoItems[indexPath.row].id else { return }
+            fileCache.delete(id)
+            self?.updateModel()
             self?.mainTable.reloadData()
+//            self?.mainTable.deleteRows(at: [indexPath], with: .automatic)
+//            self?.mainTable.reloadData()
         }
         action.image = UIImage(systemName: "trash.fill")
         action.backgroundColor = ColorPalette.red.color
@@ -99,7 +96,11 @@ extension MainViewController: UITableViewDelegate, UITableViewDataSource {
         return action
     }
     private func complete(rowIndexPathAt indexPath: IndexPath) -> UIContextualAction {
-        let action = UIContextualAction(style: .normal, title: nil) { _,_,_ in
+        let action = UIContextualAction(style: .normal, title: nil) { [ weak self] _,_,_ in
+            guard let item = self?.toDoItems[indexPath.row] else { return }
+            fileCache.add(TodoItem(id: item.id, text: item.text, importance: item.importance, deadline: item.deadline, done: true, color: item.color, creationDate: item.creationDate, changeDate: item.changeDate))
+            self?.updateModel()
+            self?.mainTable.reloadData()
         }
         action.image = UIImage(systemName: "checkmark.circle.fill")
         action.backgroundColor = ColorPalette.green.color
@@ -117,7 +118,6 @@ extension MainViewController: UITableViewDelegate, UITableViewDataSource {
         return swipe
     }
     
-    
     func tableView(_ tableView: UITableView, contextMenuConfigurationForRowAt indexPath: IndexPath, point: CGPoint) -> UIContextMenuConfiguration? {
         UIContextMenuConfiguration(identifier: nil) {
             let vc = DetailsViewController(with: self.toDoItems[indexPath.row])
@@ -131,7 +131,9 @@ extension MainViewController: UITableViewDelegate, UITableViewDataSource {
         mainTable.deselectRow(at: indexPath, animated: true)
         let vc = DetailsViewController(with: toDoItems[indexPath.row])
         vc.delegate = self
-        present(UINavigationController(rootViewController: vc), animated: true)
+        tapIndex = indexPath
+        vc.transitioningDelegate = self
+        present(vc, animated: true)
     }
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
@@ -156,7 +158,19 @@ extension MainViewController: UITableViewDelegate, UITableViewDataSource {
     }
 }
 
-
+extension MainViewController: UIViewControllerTransitioningDelegate {
+    func animationController(forPresented presented: UIViewController, presenting: UIViewController, source: UIViewController) -> UIViewControllerAnimatedTransitioning? {
+        
+        guard let cell = tableView(mainTable, cellForRowAt: tapIndex!) as? MainTableViewCell else { return nil}
+        //cell.toDoText
+        return CellAnimator(textView: cell.toDoText)
+    }
+    
+    func animationController(forDismissed dismissed: UIViewController) -> UIViewControllerAnimatedTransitioning? {
+        nil
+    }
+}
+// MARK: - DetailsVCDelegate
 
 extension MainViewController: DetailsViewControllerDelegate {
     func ToDoItemCreated(model: TodoItem, beingDeleted: Bool) {
@@ -173,29 +187,22 @@ extension MainViewController: DetailsViewControllerDelegate {
     
 }
 
-extension MainViewController {
-    func loadTestFile() {
-        var contents = ""
-        if let filepath = Bundle.main.path(forResource: "testTodoInput", ofType: "json") {
-            do {
-                contents = try String(contentsOfFile: filepath)
-            } catch {
-                print("contents could not be loaded")
-            }
-        } else {
-            print("test file not found")
-        }
-        
-        if let dir = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first {
-            
-            let fileURL = dir.appendingPathComponent("testTodoInput.json")
-            do {
-                try contents.write(to: fileURL, atomically: false, encoding: .utf8)
-                fileCache.load(from: "testTodoInput.json")
-            } catch {
-                
-            }
-        }
+
+// MARK: - Private methods
+
+private extension MainViewController {
+    
+    private func updateModel() {
+        toDoItems = Array(fileCache.todoItems.values.sorted { $0.creationDate < $1.creationDate})
+    }
+    
+    func configureNavbar() {
+        navigationController?.navigationBar.prefersLargeTitles = true
+        let attrs = [
+            NSAttributedString.Key.foregroundColor: ColorPalette.labelPrimary.color,
+        ]
+        navigationController?.navigationBar.largeTitleTextAttributes = attrs
+        title = "Мои дела"
     }
 }
 //

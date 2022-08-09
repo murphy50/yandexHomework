@@ -46,10 +46,10 @@ extension TodoItem {
         }
         guard let done = jsonObject["done"] as? Bool else { return nil }
         let color = jsonObject["color"] as? String
-        guard let doubleCreationDate = jsonObject["created_at"] as? Double else { return nil }
+        guard let doubleCreationDate = jsonObject["creationDate"] as? Double else { return nil }
         let creationDate = Date(timeIntervalSince1970: doubleCreationDate)
         var changeDate: Date?
-        if let doubleChangeDate = jsonObject["changed_at"] as? Double {
+        if let doubleChangeDate = jsonObject["changeDate"] as? Double {
             changeDate = Date(timeIntervalSince1970: doubleChangeDate)
         }
         return TodoItem(id: id,
@@ -64,14 +64,20 @@ extension TodoItem {
     var json: Any {
         var dict: [String: Any] = [:]
         dict["id"] = id
-        dict["text"] = id
-        print(importance)
-        print("------------------------------------------------")
+        dict["text"] = text
         if importance != .basic {
             dict["importance"] = importance.rawValue
         }
         if deadline != nil {
             dict["deadline"] = deadline?.timeIntervalSince1970
+        }
+        dict["done"] = done
+        if let color = color {
+            dict["color"] = color
+        }
+        dict["creationDate"] = creationDate.timeIntervalSince1970
+        if let changeDate = changeDate {
+            dict["changeDate"] = changeDate.timeIntervalSince1970
         }
         return dict
     }

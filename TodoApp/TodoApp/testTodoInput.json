@@ -6,15 +6,16 @@
         "deadline": 1658948389,
         "done": false,
         "color": "#FFFFFF",
-        "created_at": 111322252,
-        "changed_at": 121322272,
+        "creationDate": 111322252,
+        "changeDate": 121322272,
     },
     {
         "id": "2323",
         "text": "blablaasdfasdfasdfblablablaasdfasdfasdfblablablaasdfasdfasdfblablablaasdfasdfasdfblablablaasdfasdfasdfbla",
         "importance": "basic",
         "done": true,
-        "created_at": 345235325,
+        "creationDate": 111322252,
+        "changeDate": 345235325,
     },
     {
         "id": "334343433434",
@@ -22,7 +23,7 @@
         "importance": "important",
         "deadline": 165894448389,
         "done": false,
-        "created_at": 111322252,
-        "changed_at": 121322272,
+        "creationDate": 111322252,
+        "changeDate": 121322272,
     }
 ]

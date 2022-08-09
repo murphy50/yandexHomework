@@ -16,9 +16,13 @@ final class MainTableHeaderView:  UIView {
         let button = UIButton()
         button.setTitleColor(ColorPalette.blue.color, for: .normal)
         button.setTitle("Показать", for: .normal)
+        button.addTarget(self, action: #selector(save), for: .touchDown)
         return button
     }()
     
+    @objc func save() {
+        fileCache.save(to: "testTodoInput.json")
+    }
     
     // MARK: - Init
     

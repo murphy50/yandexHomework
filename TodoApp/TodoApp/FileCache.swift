@@ -58,4 +58,48 @@ final class FileCache {
             print(error.localizedDescription)
         }
     }
+    
+    func isEmpty(file: String) -> Bool? {
+        guard let documentDirectory = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first else {
+            return nil
+        }
+        let fileURL = documentDirectory.appendingPathComponent(file)
+        var content: String?
+        do {
+            content = try String(contentsOf: fileURL)
+        } catch {
+            print(error.localizedDescription)
+        }
+        if let content = content {
+            return (content.isEmpty || content.count <= 2)
+        }
+        return nil
+    }
+    
+    func loadTestFile() {
+        
+        var contents = ""
+        if let filepath = Bundle.main.path(forResource: "testTodoInput", ofType: "json") {
+            do {
+                contents = try String(contentsOfFile: filepath)
+            } catch {
+                print("contents could not be loaded")
+            }
+        } else {
+            print("test file not found")
+        }
+        
+        if !contents.isEmpty {
+            if let dir = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first {
+                
+                let fileURL = dir.appendingPathComponent("testTodoInput.json")
+                do {
+                    try contents.write(to: fileURL, atomically: false, encoding: .utf8)
+                    load(from: "testTodoInput.json")
+                } catch {
+                    
+                }
+            }
+        }
+    }
 }

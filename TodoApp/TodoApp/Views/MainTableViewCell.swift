@@ -3,7 +3,7 @@ import UIKit
 final class MainTableViewCell: UITableViewCell{
     
     // MARK: - Public property
-    
+    var text: String = ""
     static let identifier = "MainTableViewCell"
     var isDone: Bool = false
     var itemImportance: TodoItem.Importance = .basic
@@ -21,7 +21,7 @@ final class MainTableViewCell: UITableViewCell{
         return view
     }()
     
-    private let toDoText: UITextView = {
+    public let toDoText: UITextView = {
         let text = UITextView()
         text.isScrollEnabled = false
         text.backgroundColor = .clear
@@ -53,7 +53,7 @@ final class MainTableViewCell: UITableViewCell{
     // MARK: - Public method
     
     public func configure(with model: TodoItem) {
-        
+        text = model.text
         if model.done {
             circleView.backgroundColor = ColorPalette.green.color
         } else if  model.importance == .important {

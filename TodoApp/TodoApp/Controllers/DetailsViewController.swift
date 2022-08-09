@@ -7,8 +7,9 @@ protocol DetailsViewControllerDelegate: AnyObject {
     func ToDoItemCreated(model: TodoItem, beingDeleted: Bool)
 }
 
+// MARK:  DetailsViewController
 final class DetailsViewController: UIViewController, UITextViewDelegate {
-    
+
     
     // MARK: - Public properties
     
@@ -39,7 +40,6 @@ final class DetailsViewController: UIViewController, UITextViewDelegate {
     @objc func cancelCreationToDoItem() {
         navigationController?.dismiss(animated: true)
     }
-    
     
     
     // MARK: - TextView
@@ -146,9 +146,26 @@ final class DetailsViewController: UIViewController, UITextViewDelegate {
             UIImage(systemName: "exclamationmark.2")!.withTintColor(ColorPalette.red.color, renderingMode: .alwaysOriginal),
         ])
         segmentedControl.selectedSegmentIndex = 1
+        segmentedControl.addTarget(self, action: #selector(segmentedControlDidChange(target:)), for: .valueChanged)
         return segmentedControl
     }()
     
+    @objc func segmentedControlDidChange(target: UISegmentedControl) {
+        let importance: TodoItem.Importance
+        switch target.selectedSegmentIndex {
+        case 0: importance = .low
+        case 2: importance = .important
+        default: importance = .basic
+        }
+        model = TodoItem(id: model.id,
+                         text: model.text,
+                         importance: importance,
+                         deadline: model.deadline,
+                         done: model.done,
+                         color: model.color,
+                         creationDate: model.creationDate,
+                         changeDate: model.changeDate)
+    }
     
     private lazy var importanceView: UIView = {
         let stackView = UIStackView()
@@ -289,6 +306,32 @@ final class DetailsViewController: UIViewController, UITextViewDelegate {
         
     }
     
+}
+
+
+// MARK: - Private methods
+
+private extension DetailsViewController {
+        
+    func set(with importance: TodoItem.Importance) {
+        switch importance {
+        case .important:
+            segmentedControl.selectedSegmentIndex = 2
+        case .low:
+            segmentedControl.selectedSegmentIndex = 0
+        case .basic:
+            segmentedControl.selectedSegmentIndex = 1
+        }
+    }
+    
+    func set(with text: String) {
+        textView.text = text
+    }
+    func set(with deadline: Date?) {
+        guard let deadline = deadline else { return }
+        calendar.date = deadline
+    }
+    
     func configureConstraints() {
         NSLayoutConstraint.activate([
             
@@ -318,28 +361,5 @@ final class DetailsViewController: UIViewController, UITextViewDelegate {
             deleteButton.heightAnchor.constraint(equalToConstant: 56),
             deleteButton.trailingAnchor.constraint(equalTo: scrollView.trailingAnchor, constant: -16),
         ])
-    }
-}
-
-private extension DetailsViewController {
-    
-    
-    func set(with importance: TodoItem.Importance) {
-        switch importance {
-        case .important:
-            segmentedControl.selectedSegmentIndex = 2
-        case .low:
-            segmentedControl.selectedSegmentIndex = 0
-        case .basic:
-            segmentedControl.selectedSegmentIndex = 1
-        }
-    }
-    
-    func set(with text: String) {
-        textView.text = text
-    }
-    func set(with deadline: Date?) {
-        guard let deadline = deadline else { return }
-        calendar.date = deadline
     }
 }
