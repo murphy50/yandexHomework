@@ -9,19 +9,13 @@ import UIKit
 
 class CellAnimator: NSObject, UIViewControllerAnimatedTransitioning {
     
-//    let presentationCellFrame: CGRect = .zero
-//    let rectOfCellInSuperview: CGRect
-//    init(presentationCellFrame: CGRect) {
-//        self.rectOfCellInSuperview = presentationCellFrame
-//    }
-    let textFrame: UITextView
-    init(textView: UITextView) {
-        self.textFrame = textView
+    let table: UITableView
+    let indexPath: IndexPath
+    init(table: UITableView, indexPath: IndexPath) {
+        self.table = table
+        self.indexPath = indexPath
     }
-    //let presentationCell: MainTableViewCell
-//    init(presentationCell: MainTableViewCell) {
-//        self.presentationCell = presentationCell
-//    }
+
     func animateTransition(using transitionContext: UIViewControllerContextTransitioning) {
         let containerView = transitionContext.containerView
         
@@ -32,16 +26,15 @@ class CellAnimator: NSObject, UIViewControllerAnimatedTransitioning {
         }
         
         let finalFrame = transitionContext.finalFrame(for: presentedViewController)
-        
-        let cellFrame = textFrame.convert(textFrame.bounds, to: containerView) //presentationCell.convert(presentationCell.bounds, to: containerView)
+        let rectOfCell = table.rectForRow(at: indexPath)
+        let cellFrame = table.convert(rectOfCell, to: containerView) //presentationCell.convert(presentationCell.bounds, to: containerView)
         let cellCenter = CGPoint(x: cellFrame.midX, y: cellFrame.minY)
-        print(cellCenter)
         containerView.addSubview(presentedView)
         presentedView.center = cellCenter
-        presentedView.transform = CGAffineTransform(scaleX: 0.2, y: 0.2)
+        presentedView.transform = CGAffineTransform(scaleX: 0.05, y: 0.05)
         
         UIView.animate(withDuration: transitionDuration(using: transitionContext)) {
-            //presentedView.transform = CGAffineTransform(scaleX: 1, y: 1)
+            presentedView.transform = CGAffineTransform(scaleX: 1, y: 1)
             presentedView.frame = finalFrame
         } completion: { isFinished in
             transitionContext.completeTransition(isFinished)

@@ -126,14 +126,15 @@ extension MainViewController: UITableViewDelegate, UITableViewDataSource {
         }
     }
     
-    // MARK: - settings for didSelectRow -
+    // MARK: - didSelectRow
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         mainTable.deselectRow(at: indexPath, animated: true)
         let vc = DetailsViewController(with: toDoItems[indexPath.row])
         vc.delegate = self
         tapIndex = indexPath
-        vc.transitioningDelegate = self
-        present(vc, animated: true)
+        let navBarVC = UINavigationController(rootViewController: vc)
+        navBarVC.transitioningDelegate = self
+        present(navBarVC, animated: true)
     }
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
@@ -161,9 +162,7 @@ extension MainViewController: UITableViewDelegate, UITableViewDataSource {
 extension MainViewController: UIViewControllerTransitioningDelegate {
     func animationController(forPresented presented: UIViewController, presenting: UIViewController, source: UIViewController) -> UIViewControllerAnimatedTransitioning? {
         
-        guard let cell = tableView(mainTable, cellForRowAt: tapIndex!) as? MainTableViewCell else { return nil}
-        //cell.toDoText
-        return CellAnimator(textView: cell.toDoText)
+        CellAnimator(table: mainTable, indexPath: tapIndex!)
     }
     
     func animationController(forDismissed dismissed: UIViewController) -> UIViewControllerAnimatedTransitioning? {
@@ -205,40 +204,3 @@ private extension MainViewController {
         title = "Мои дела"
     }
 }
-//
-//extension MainViewController: UIViewControllerTransitioningDelegate {
-//    func animationController(forDismissed dismissed: UIViewController) -> UIViewControllerAnimatedTransitioning? {
-//        nil
-//    }
-//    func animationController(forPresented presented: UIViewController, presenting: UIViewController, source: UIViewController) -> UIViewControllerAnimatedTransitioning? {
-//        PresentAnimator()
-//    }
-//}
-
-//class PresentAnimator: NSObject, UIViewControllerAnimatedTransitioning {
-//    func transitionDuration(using transitionContext: UIViewControllerContextTransitioning?) -> TimeInterval {
-//        0.5
-//    }
-//
-//    func animateTransition(using transitionContext: UIViewControllerContextTransitioning) {
-//        guard
-//         //   let rectOfCell = MainViewController.mainTable.rectForRowAtIndexPath(0),
-//           // let rectOfCellInSuperview = tableView.convertRect(rectOfCell, toView: tableView.superview),
-//            let fromViewController = (transitionContext.viewController(forKey: .from) as? UINavigationController)?.topViewController as? MainViewController,
-//            //let cellImageView = MainTableViewCell.frame,
-//            let toView = transitionContext.view(forKey: .to),
-//            let fromView = transitionContext.view(forKey: .from)
-//        else { return }
-//        let startFrame = CGRect(x: 20, y: 271, width: 388, height: 109)//cellImageView.superview?.convert(MainTableViewCell.frame, to: nil)
-//
-//
-//
-//        toView.frame = startFrame
-//
-//        let containerView = transitionContext.containerView
-//        containerView.addSubview(toView)
-//
-//    }
-//
-//
-//}
