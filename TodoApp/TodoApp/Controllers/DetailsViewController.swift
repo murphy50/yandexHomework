@@ -8,8 +8,8 @@ protocol DetailsViewControllerDelegate: AnyObject {
 }
 
 // MARK:  DetailsViewController
-final class DetailsViewController: UIViewController, UITextViewDelegate {
-
+final class DetailsViewController: UIViewController {
+    
     
     // MARK: - Public properties
     
@@ -30,18 +30,6 @@ final class DetailsViewController: UIViewController, UITextViewDelegate {
         navigationItem.rightBarButtonItem = rightBarButton
     }
     
-    @objc func saveToDoItem() {
-        textViewDidEndEditing(textView)
-        delegate?.ToDoItemCreated(model: model, beingDeleted: beingDeleted)
-        navigationController?.dismiss(animated: true)
-        
-    }
-    
-    @objc func cancelCreationToDoItem() {
-        navigationController?.dismiss(animated: true)
-    }
-    
-    
     // MARK: - TextView
     private lazy var textView: UITextView = {
         let textView = UITextView()
@@ -56,45 +44,6 @@ final class DetailsViewController: UIViewController, UITextViewDelegate {
         return textView
     }()
     
-    func textViewDidChange(_ textView: UITextView) {
-        if !textView.text.isEmpty {
-            navigationItem.rightBarButtonItem?.isEnabled = true
-        } else {
-            navigationItem.rightBarButtonItem?.isEnabled = false
-        }
-    }
-    
-    func textViewDidBeginEditing(_ textView: UITextView) {
-        if textView.textColor == ColorPalette.tertiary.color {
-            textView.text = nil
-            textView.textColor = ColorPalette.labelPrimary.color
-        }
-    }
-    
-    func textViewDidEndEditing(_ textView: UITextView) {
-        if textView.text.isEmpty {
-            textView.text = "Что надо сделать?"
-            textView.textColor = ColorPalette.tertiary.color
-        }
-        model = TodoItem(id: model.id,
-                         text: textView.text,
-                         importance: model.importance,
-                         deadline: model.deadline,
-                         done: model.done,
-                         color: model.color,
-                         creationDate: model.creationDate,
-                         changeDate: model.changeDate)
-    }
-    
-    @objc private func onKeyboardAppear(_ notification: Notification) {
-        if let keyboardSize = (notification.userInfo?[UIResponder.keyboardFrameEndUserInfoKey] as? NSValue)?.cgRectValue {
-            scrollView.contentInset = .init(top: 0, left: 0, bottom: keyboardSize.height, right: 0)
-        }
-    }
-    
-    @objc private func onKeyboardDisappear(_ notification: Notification) {
-        scrollView.contentInset = .init(top: 0, left: 0, bottom: 0, right: 0)
-    }
     
     // MARK: - Views
     
@@ -179,20 +128,7 @@ final class DetailsViewController: UIViewController, UITextViewDelegate {
         return stackView
     }()
     
-    @objc func switchValueDidChange(target: UISwitch) {
-        if target.isOn {
-            calendar.isHidden = false
-            self.calendar.alpha = 1.0
-            stackView.addArrangedSubview(calendar)
-            
-        } else {
-            UIView.animate(withDuration: 0.3,
-                           animations: {
-                self.calendar.alpha = 0
-                self.calendar.isHidden = true
-            })
-        }
-    }
+    
     private lazy var deadlineView: UIView = {
         let stackView = UIStackView()
         stackView.axis = .horizontal
@@ -250,13 +186,6 @@ final class DetailsViewController: UIViewController, UITextViewDelegate {
         return button
     }()
     
-    @objc func deleteToDoItem() {
-        delegate?.ToDoItemCreated(model: model, beingDeleted: true)
-        navigationController?.dismiss(animated: true)
-    }
-    @objc func dismissKeyboard() {
-        view.endEditing(true)
-    }
     
     private func configure(with model: TodoItem) {
         set(with: model.importance)
@@ -282,8 +211,12 @@ final class DetailsViewController: UIViewController, UITextViewDelegate {
     deinit {
         NotificationCenter.default.removeObserver(self)
     }
-    
-    //MARK: - viewDidLoad()
+}
+
+
+// MARK: - override
+
+extension DetailsViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -299,20 +232,18 @@ final class DetailsViewController: UIViewController, UITextViewDelegate {
         textViewDidChange(textView)
         textViewDidEndEditing(textView)
         
-        
         let tap = UITapGestureRecognizer(target: self, action: #selector(UIInputViewController.dismissKeyboard))
         tap.cancelsTouchesInView = false
         view.addGestureRecognizer(tap)
         
     }
-    
 }
 
 
 // MARK: - Private methods
 
 private extension DetailsViewController {
-        
+    
     func set(with importance: TodoItem.Importance) {
         switch importance {
         case .important:
@@ -327,6 +258,7 @@ private extension DetailsViewController {
     func set(with text: String) {
         textView.text = text
     }
+    
     func set(with deadline: Date?) {
         guard let deadline = deadline else { return }
         calendar.date = deadline
@@ -361,5 +293,90 @@ private extension DetailsViewController {
             deleteButton.heightAnchor.constraint(equalToConstant: 56),
             deleteButton.trailingAnchor.constraint(equalTo: scrollView.trailingAnchor, constant: -16),
         ])
+    }
+}
+
+
+// MARK: - UITextViewDelegate
+
+extension DetailsViewController: UITextViewDelegate {
+    
+    func textViewDidChange(_ textView: UITextView) {
+        if !textView.text.isEmpty {
+            navigationItem.rightBarButtonItem?.isEnabled = true
+        } else {
+            navigationItem.rightBarButtonItem?.isEnabled = false
+        }
+    }
+    
+    func textViewDidBeginEditing(_ textView: UITextView) {
+        if textView.textColor == ColorPalette.tertiary.color {
+            textView.text = nil
+            textView.textColor = ColorPalette.labelPrimary.color
+        }
+    }
+    
+    func textViewDidEndEditing(_ textView: UITextView) {
+        if textView.text.isEmpty {
+            textView.text = "Что надо сделать?"
+            textView.textColor = ColorPalette.tertiary.color
+        }
+        model = TodoItem(id: model.id,
+                         text: textView.text,
+                         importance: model.importance,
+                         deadline: model.deadline,
+                         done: model.done,
+                         color: model.color,
+                         creationDate: model.creationDate,
+                         changeDate: model.changeDate)
+    }
+}
+
+
+// MARK: - Actions
+
+extension DetailsViewController {
+    @objc private func onKeyboardAppear(_ notification: Notification) {
+        if let keyboardSize = (notification.userInfo?[UIResponder.keyboardFrameEndUserInfoKey] as? NSValue)?.cgRectValue {
+            scrollView.contentInset = .init(top: 0, left: 0, bottom: keyboardSize.height, right: 0)
+        }
+    }
+    
+    @objc private func onKeyboardDisappear(_ notification: Notification) {
+        scrollView.contentInset = .init(top: 0, left: 0, bottom: 0, right: 0)
+    }
+    
+    @objc func deleteToDoItem() {
+        delegate?.ToDoItemCreated(model: model, beingDeleted: true)
+        navigationController?.dismiss(animated: true)
+    }
+    @objc func dismissKeyboard() {
+        view.endEditing(true)
+    }
+    
+    @objc func saveToDoItem() {
+        textViewDidEndEditing(textView)
+        delegate?.ToDoItemCreated(model: model, beingDeleted: beingDeleted)
+        navigationController?.dismiss(animated: true)
+        
+    }
+    
+    @objc func cancelCreationToDoItem() {
+        navigationController?.dismiss(animated: true)
+    }
+    
+    @objc func switchValueDidChange(target: UISwitch) {
+        if target.isOn {
+            calendar.isHidden = false
+            self.calendar.alpha = 1.0
+            stackView.addArrangedSubview(calendar)
+            
+        } else {
+            UIView.animate(withDuration: 0.3,
+                           animations: {
+                self.calendar.alpha = 0
+                self.calendar.isHidden = true
+            })
+        }
     }
 }

@@ -3,7 +3,6 @@ import UIKit
 final class MainTableViewCell: UITableViewCell{
     
     // MARK: - Public property
-    var text: String = ""
     static let identifier = "MainTableViewCell"
     var isDone: Bool = false
     var itemImportance: TodoItem.Importance = .basic
@@ -53,7 +52,6 @@ final class MainTableViewCell: UITableViewCell{
     // MARK: - Public method
     
     public func configure(with model: TodoItem) {
-        text = model.text
         if model.done {
             circleView.backgroundColor = ColorPalette.green.color
         } else if  model.importance == .important {

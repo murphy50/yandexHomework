@@ -12,6 +12,10 @@ final class FileCache {
         todoItems.removeValue(forKey: itemID)
     }
     
+    var completedTasks: Int {
+        todoItems.filter({ $0.value.done }).count
+    }
+    
     var getArray: [TodoItem] {
         Array(todoItems.values.sorted { $0.creationDate < $1.creationDate})
     }
@@ -76,10 +80,10 @@ final class FileCache {
         return nil
     }
     
-    func loadTestFile() {
+    func loadTestFile(_ file: String) {
         
         var contents = ""
-        if let filepath = Bundle.main.path(forResource: "testTodoInput", ofType: "json") {
+        if let filepath = Bundle.main.path(forResource: file, ofType: nil) {
             do {
                 contents = try String(contentsOfFile: filepath)
             } catch {
@@ -92,10 +96,10 @@ final class FileCache {
         if !contents.isEmpty {
             if let dir = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first {
                 
-                let fileURL = dir.appendingPathComponent("testTodoInput.json")
+                let fileURL = dir.appendingPathComponent(file)
                 do {
                     try contents.write(to: fileURL, atomically: false, encoding: .utf8)
-                    load(from: "testTodoInput.json")
+                    load(from: file)
                 } catch {
                     
                 }

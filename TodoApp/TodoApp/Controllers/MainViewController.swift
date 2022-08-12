@@ -1,14 +1,28 @@
 import UIKit
- var fileCache = FileCache()
+var fileCache = FileCache()
 
 final class MainViewController: UIViewController {
     
-    
     // MARK: - Private properties
-
+    
     private var toDoItems: [TodoItem] = []
     private var tapIndex: IndexPath?
+    private var isShowAll: Bool = false
+    private  var headerView: MainTableHeaderView?
     
+    private func update() {
+        updateModel()
+        mainTable.reloadData()
+        updateHeader()
+    }
+    
+    private func updateHeader() {
+        if let headerView = headerView {
+            headerView.configure(isShowAll: isShowAll, completedTasksNumber: fileCache.completedTasks)
+        } else {
+            headerView = MainTableHeaderView(isShowAll: isShowAll, completedTasksNumber: fileCache.completedTasks)
+        }
+    }
     private lazy var mainTable: UITableView = {
         let table = UITableView(frame: .zero, style: .insetGrouped)
         table.layer.cornerRadius = 30
@@ -43,13 +57,16 @@ final class MainViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        if fileCache.isEmpty(file: "testTodoInput.json") ?? true {
-            fileCache.loadTestFile()
+        if fileCache.isEmpty(file: "testTodoInput2.json") ?? true {
+            fileCache.loadTestFile("testTodoInput2.json")
         } else {
-            fileCache.load(from: "testTodoInput.json")
+            fileCache.load(from: "testTodoInput2.json")
         }
-        updateModel()
+        update()
+        //updateWithCleanModel()()
         configureNavbar()
+        headerView = MainTableHeaderView(isShowAll: isShowAll, completedTasksNumber: fileCache.completedTasks)
+        
         //let headerView = MainTableHeaderUIView()
         view.backgroundColor = ColorPalette.backPrimary.color
         view.addSubview(mainTable)
@@ -79,10 +96,9 @@ extension MainViewController: UITableViewDelegate, UITableViewDataSource {
         let action = UIContextualAction(style: .destructive, title: nil) { [weak self] _,_,_ in
             guard let id = self?.toDoItems[indexPath.row].id else { return }
             fileCache.delete(id)
-            self?.updateModel()
-            self?.mainTable.reloadData()
-//            self?.mainTable.deleteRows(at: [indexPath], with: .automatic)
-//            self?.mainTable.reloadData()
+            self?.update()
+            //            self?.mainTable.deleteRows(at: [indexPath], with: .automatic)
+            //            self?.mainTable.reloadData()
         }
         action.image = UIImage(systemName: "trash.fill")
         action.backgroundColor = ColorPalette.red.color
@@ -99,8 +115,7 @@ extension MainViewController: UITableViewDelegate, UITableViewDataSource {
         let action = UIContextualAction(style: .normal, title: nil) { [ weak self] _,_,_ in
             guard let item = self?.toDoItems[indexPath.row] else { return }
             fileCache.add(TodoItem(id: item.id, text: item.text, importance: item.importance, deadline: item.deadline, done: true, color: item.color, creationDate: item.creationDate, changeDate: item.changeDate))
-            self?.updateModel()
-            self?.mainTable.reloadData()
+            self?.update()
         }
         action.image = UIImage(systemName: "checkmark.circle.fill")
         action.backgroundColor = ColorPalette.green.color
@@ -119,14 +134,23 @@ extension MainViewController: UITableViewDelegate, UITableViewDataSource {
     }
     
     func tableView(_ tableView: UITableView, contextMenuConfigurationForRowAt indexPath: IndexPath, point: CGPoint) -> UIContextMenuConfiguration? {
-        UIContextMenuConfiguration(identifier: nil) {
+        UIContextMenuConfiguration(identifier: indexPath as NSCopying) {
             let vc = DetailsViewController(with: self.toDoItems[indexPath.row])
             vc.delegate = self
-            return vc
+            return UINavigationController(rootViewController: vc)
+        }
+    }
+    
+    func tableView(_ tableView: UITableView, willPerformPreviewActionForMenuWith configuration: UIContextMenuConfiguration, animator: UIContextMenuInteractionCommitAnimating) {
+        guard let destinationViewController = animator.previewViewController else { return }
+        //FIXME: -  need to adjust the animationt
+        animator.addAnimations {
+            self.present(destinationViewController, animated: true)
         }
     }
     
     // MARK: - didSelectRow
+    
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         mainTable.deselectRow(at: indexPath, animated: true)
         let vc = DetailsViewController(with: toDoItems[indexPath.row])
@@ -151,8 +175,12 @@ extension MainViewController: UITableViewDelegate, UITableViewDataSource {
         return cell
     }
     func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
-        let view = MainTableHeaderView()
-        return view
+        guard let header = headerView else { return nil }
+        header.action = { [weak self] isShowAll in
+            self?.isShowAll = isShowAll
+            self?.update()
+        }
+        return header
     }
     func tableView(_ tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
         60
@@ -160,6 +188,7 @@ extension MainViewController: UITableViewDelegate, UITableViewDataSource {
 }
 
 extension MainViewController: UIViewControllerTransitioningDelegate {
+    
     func animationController(forPresented presented: UIViewController, presenting: UIViewController, source: UIViewController) -> UIViewControllerAnimatedTransitioning? {
         
         CellAnimator(table: mainTable, indexPath: tapIndex!)
@@ -169,18 +198,19 @@ extension MainViewController: UIViewControllerTransitioningDelegate {
         nil
     }
 }
+
+
 // MARK: - DetailsVCDelegate
 
 extension MainViewController: DetailsViewControllerDelegate {
+    
     func ToDoItemCreated(model: TodoItem, beingDeleted: Bool) {
         if beingDeleted {
             fileCache.delete(model.id)
-            updateModel()
-            mainTable.reloadData()
+            update()
         } else {
             fileCache.add(model)
-            updateModel()
-            mainTable.reloadData()
+            update()
         }
     }
     
@@ -191,8 +221,15 @@ extension MainViewController: DetailsViewControllerDelegate {
 
 private extension MainViewController {
     
-    private func updateModel() {
-        toDoItems = Array(fileCache.todoItems.values.sorted { $0.creationDate < $1.creationDate})
+    func updateModel() {
+        if isShowAll {
+            toDoItems = Array(fileCache.todoItems.values.sorted { $0.creationDate < $1.creationDate})
+        } else {
+            let cleanDictionary = fileCache.todoItems.values.filter({ todoItem in
+                !todoItem.done && !(todoItem.importance == .important)
+            })
+            toDoItems = cleanDictionary.sorted { $0.creationDate < $1.creationDate }
+        }
     }
     
     func configureNavbar() {
