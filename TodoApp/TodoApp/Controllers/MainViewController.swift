@@ -59,7 +59,7 @@ final class MainViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        //DDLog.add(DDOSLogger.sharedInstance) // Uses os_log
+        // DDLog.add(DDOSLogger.sharedInstance) // Uses os_log
 
         let fileLogger: DDFileLogger = DDFileLogger() // File Logger
         fileLogger.rollingFrequency = 60 * 60 * 24 // 24 hours
@@ -72,15 +72,15 @@ final class MainViewController: UIViewController {
             fileCache.load(from: "testTodoInput2.json")
         }
         update()
-        //updateWithCleanModel()()
+        // updateWithCleanModel()(
         configureNavbar()
         headerView = MainTableHeaderView(isShowAll: isShowAll, completedTasksNumber: fileCache.completedTasks)
         
-        //let headerView = MainTableHeaderUIView()
+        // let headerView = MainTableHeaderUIView()
         view.backgroundColor = ColorPalette.backPrimary.color
         view.addSubview(mainTable)
         view.addSubview(addItemButton)
-        //mainTable.tableHeaderView = headerView
+        // mainTable.tableHeaderView = headerView
         mainTable.delegate = self
         mainTable.dataSource = self
         
@@ -102,7 +102,7 @@ final class MainViewController: UIViewController {
 
 extension MainViewController: UITableViewDelegate, UITableViewDataSource {
     private func delete(rowIndexPathAt indexPath: IndexPath) -> UIContextualAction {
-        let action = UIContextualAction(style: .destructive, title: nil) { [weak self] _,_,_ in
+        let action = UIContextualAction(style: .destructive, title: nil) { [weak self] _, _, _ in
             guard let id = self?.toDoItems[indexPath.row].id else { return }
             fileCache.delete(id)
             self?.update()
@@ -114,16 +114,22 @@ extension MainViewController: UITableViewDelegate, UITableViewDataSource {
         return action
     }
     private func info(rowIndexPathAt indexPath: IndexPath) -> UIContextualAction {
-        let action = UIContextualAction(style: .normal, title: nil) { _,_,_ in
+        let action = UIContextualAction(style: .normal, title: nil) { _, _, _ in
         }
         action.image = UIImage(systemName: "info.circle.fill")
         action.backgroundColor = ColorPalette.gray.color
         return action
     }
     private func complete(rowIndexPathAt indexPath: IndexPath) -> UIContextualAction {
-        let action = UIContextualAction(style: .normal, title: nil) { [ weak self] _,_,_ in
+        let action = UIContextualAction(style: .normal, title: nil) { [ weak self] _, _, _ in
             guard let item = self?.toDoItems[indexPath.row] else { return }
-            fileCache.add(TodoItem(id: item.id, text: item.text, importance: item.importance, deadline: item.deadline, done: true, color: item.color, creationDate: item.creationDate, changeDate: item.changeDate))
+            fileCache.add(TodoItem(id: item.id,
+                                   text: item.text,
+                                   importance: item.importance, deadline: item.deadline,
+                                   done: true,
+                                   color: item.color,
+                                   creationDate: item.creationDate,
+                                   changeDate: item.changeDate))
             self?.update()
         }
         action.image = UIImage(systemName: "checkmark.circle.fill")
@@ -152,7 +158,7 @@ extension MainViewController: UITableViewDelegate, UITableViewDataSource {
     
     func tableView(_ tableView: UITableView, willPerformPreviewActionForMenuWith configuration: UIContextMenuConfiguration, animator: UIContextMenuInteractionCommitAnimating) {
         guard let destinationViewController = animator.previewViewController else { return }
-        //FIXME: -  need to adjust the animationt
+        // FIXME: need to adjust the animationt
         animator.addAnimations {
             self.present(destinationViewController, animated: true)
         }
@@ -208,12 +214,11 @@ extension MainViewController: UIViewControllerTransitioningDelegate {
     }
 }
 
-
 // MARK: - DetailsVCDelegate
 
 extension MainViewController: DetailsViewControllerDelegate {
     
-    func ToDoItemCreated(model: TodoItem, beingDeleted: Bool) {
+    func toDoItemCreated(model: TodoItem, beingDeleted: Bool) {
         if beingDeleted {
             fileCache.delete(model.id)
             update()
@@ -224,7 +229,6 @@ extension MainViewController: DetailsViewControllerDelegate {
     }
     
 }
-
 
 // MARK: - Private methods
 

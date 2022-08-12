@@ -1,12 +1,11 @@
 import UIKit
 
-final class MainTableViewCell: UITableViewCell{
+final class MainTableViewCell: UITableViewCell {
     
     // MARK: - Public property
     static let identifier = "MainTableViewCell"
     var isDone: Bool = false
     var itemImportance: TodoItem.Importance = .basic
-    
     
     // MARK: - Private property
     
@@ -35,7 +34,6 @@ final class MainTableViewCell: UITableViewCell{
         return chevron
     }()
     
-    
     // MARK: - init
     
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
@@ -47,7 +45,6 @@ final class MainTableViewCell: UITableViewCell{
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
-    
     
     // MARK: - Public method
     
@@ -65,7 +62,6 @@ final class MainTableViewCell: UITableViewCell{
         isDone = model.done
     }
 }
-
 
 // MARK: - Private methods
 

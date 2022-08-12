@@ -27,7 +27,7 @@ class CellAnimator: NSObject, UIViewControllerAnimatedTransitioning {
         
         let finalFrame = transitionContext.finalFrame(for: presentedViewController)
         let rectOfCell = table.rectForRow(at: indexPath)
-        let cellFrame = table.convert(rectOfCell, to: containerView) //presentationCell.convert(presentationCell.bounds, to: containerView)
+        let cellFrame = table.convert(rectOfCell, to: containerView)
         let cellCenter = CGPoint(x: cellFrame.midX, y: cellFrame.minY)
         containerView.addSubview(presentedView)
         presentedView.center = cellCenter

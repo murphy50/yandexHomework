@@ -155,7 +155,6 @@
 				9234484ED9E130EFD77E611C /* Pods-TodoApp.debug.xcconfig */,
 				3D729D40D71D2F690F6AC7F8 /* Pods-TodoApp.release.xcconfig */,
 			);
-			name = Pods;
 			path = Pods;
 			sourceTree = "<group>";
 		};
@@ -175,6 +174,7 @@
 			buildConfigurationList = 0DD390F42896D3BA008CD29E /* Build configuration list for PBXNativeTarget "TodoApp" */;
 			buildPhases = (
 				E0881391A15DD9180AA0CDFF /* [CP] Check Pods Manifest.lock */,
+				0D79B04428A6AE2B00FCD0BB /* Run SwiftLint */,
 				0DD390DC2896D3B7008CD29E /* Sources */,
 				0DD390DD2896D3B7008CD29E /* Frameworks */,
 				0DD390DE2896D3B7008CD29E /* Resources */,
@@ -266,6 +266,24 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXShellScriptBuildPhase section */
+		0D79B04428A6AE2B00FCD0BB /* Run SwiftLint */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+			);
+			name = "Run SwiftLint";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "export PATH=\"$PATH:/opt/homebrew/bin\"\nif which swiftlint > /dev/null; then\n  swiftlint\nelse\n  echo \"warning: SwiftLint not installed, download from https://github.com/realm/SwiftLint\"\nfi\n";
+		};
 		6D6CDE1C17AC49B3010B967C /* [CP] Embed Pods Frameworks */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;

@@ -1,7 +1,7 @@
 import Foundation
 import UIKit
 
-final class MainTableHeaderView:  UIView {
+final class MainTableHeaderView: UIView {
     
     var action: ((Bool) -> Void)?
     
@@ -49,7 +49,6 @@ final class MainTableHeaderView:  UIView {
         fatalError("init(coder:) has not been implemented")
     }
 }
-
 
 // MARK: - Private methods
 

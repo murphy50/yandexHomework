@@ -1,6 +1,5 @@
 import Foundation
 
-
 struct TodoItem {
     enum Importance: String {
         case low, basic, important
@@ -34,7 +33,7 @@ struct TodoItem {
 }
 
 extension TodoItem {
-    static func parse(json: Any) -> TodoItem?{
+    static func parse(json: Any) -> TodoItem? {
         guard let jsonObject = json as? [String: Any] else { return nil }
         
         guard let id = jsonObject["id"] as? String else { return nil }
@@ -82,4 +81,3 @@ extension TodoItem {
         return dict
     }
 }
-
