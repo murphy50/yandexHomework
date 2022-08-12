@@ -6,13 +6,21 @@
 //
 
 import UIKit
-
+import CocoaLumberjack
 @main
 class AppDelegate: UIResponder, UIApplicationDelegate {
     
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
-        // Override point for customization after application launch.
+        setupLogger()
         return true
+    }
+    
+    public let fileLogger: DDFileLogger = DDFileLogger()
+    private func setupLogger() {
+        DDLog.add(DDOSLogger.sharedInstance)
+        fileLogger.rollingFrequency = TimeInterval(60*60*24)
+        fileLogger.logFileManager.maximumNumberOfLogFiles = 7
+        DDLog.add(fileLogger, with: .info)
     }
     
     // MARK: UISceneSession Lifecycle

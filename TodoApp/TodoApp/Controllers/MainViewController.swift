@@ -1,4 +1,6 @@
 import UIKit
+import CocoaLumberjack
+
 var fileCache = FileCache()
 
 final class MainViewController: UIViewController {
@@ -57,6 +59,13 @@ final class MainViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        //DDLog.add(DDOSLogger.sharedInstance) // Uses os_log
+
+        let fileLogger: DDFileLogger = DDFileLogger() // File Logger
+        fileLogger.rollingFrequency = 60 * 60 * 24 // 24 hours
+        fileLogger.logFileManager.maximumNumberOfLogFiles = 7
+               DDLog.add(fileLogger)
+        DDLogInfo("MainViewController did appear")
         if fileCache.isEmpty(file: "testTodoInput2.json") ?? true {
             fileCache.loadTestFile("testTodoInput2.json")
         } else {
