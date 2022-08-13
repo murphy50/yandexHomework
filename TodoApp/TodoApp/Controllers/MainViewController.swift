@@ -158,7 +158,7 @@ extension MainViewController: UITableViewDelegate, UITableViewDataSource {
     
     func tableView(_ tableView: UITableView, willPerformPreviewActionForMenuWith configuration: UIContextMenuConfiguration, animator: UIContextMenuInteractionCommitAnimating) {
         guard let destinationViewController = animator.previewViewController else { return }
-        // FIXME: need to adjust the animationt
+        animator.preferredCommitStyle = .dismiss
         animator.addAnimations {
             self.present(destinationViewController, animated: true)
         }
