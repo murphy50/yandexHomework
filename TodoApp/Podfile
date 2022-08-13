@@ -5,4 +5,6 @@ target 'TodoApp' do
   use_frameworks!
   pod 'CocoaLumberjack/Swift'
   pod 'SwiftLint'
+  pod 'CellAnimator', :path => 'CellAnimator'
+  pod 'MyColors', :path => 'MyColors'
 end

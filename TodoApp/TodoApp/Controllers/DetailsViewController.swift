@@ -1,4 +1,5 @@
 import UIKit
+import MyColors
 
 // MARK: - DetailsVCDelegate
 

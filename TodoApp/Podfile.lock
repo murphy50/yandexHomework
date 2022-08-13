@@ -1,11 +1,15 @@
 PODS:
+  - CellAnimator (0.1.0)
   - CocoaLumberjack/Core (3.7.4)
   - CocoaLumberjack/Swift (3.7.4):
     - CocoaLumberjack/Core
+  - MyColors (0.1.0)
   - SwiftLint (0.48.0)
 
 DEPENDENCIES:
+  - CellAnimator (from `CellAnimator`)
   - CocoaLumberjack/Swift
+  - MyColors (from `MyColors`)
   - SwiftLint
 
 SPEC REPOS:
@@ -13,10 +17,18 @@ SPEC REPOS:
     - CocoaLumberjack
     - SwiftLint
 
+EXTERNAL SOURCES:
+  CellAnimator:
+    :path: CellAnimator
+  MyColors:
+    :path: MyColors
+
 SPEC CHECKSUMS:
+  CellAnimator: 52b0da46321a92bd09ccb1f1401af028fb95984a
   CocoaLumberjack: 543c79c114dadc3b1aba95641d8738b06b05b646
+  MyColors: cd044d093e80fd7137f8b85d6844ce471676a43f
   SwiftLint: 284cea64b6187c5d6bd83e9a548a64104d546447
 
-PODFILE CHECKSUM: 1118120da3e11680d2bd7582bb0855a74fd8f987
+PODFILE CHECKSUM: 0aba35e9a4eee90c05839ec5893091a286aee5fb
 
 COCOAPODS: 1.11.3

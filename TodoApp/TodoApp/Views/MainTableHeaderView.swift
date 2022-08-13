@@ -1,5 +1,6 @@
 import Foundation
 import UIKit
+import MyColors
 
 final class MainTableHeaderView: UIView {
     
