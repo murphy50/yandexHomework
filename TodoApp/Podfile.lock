@@ -7,9 +7,9 @@ PODS:
   - SwiftLint (0.48.0)
 
 DEPENDENCIES:
-  - CellAnimator (from `CellAnimator`)
+  - CellAnimator (from `TodoApp/CellAnimator`)
   - CocoaLumberjack/Swift
-  - MyColors (from `MyColors`)
+  - MyColors (from `TodoApp/MyColors`)
   - SwiftLint
 
 SPEC REPOS:
@@ -19,9 +19,9 @@ SPEC REPOS:
 
 EXTERNAL SOURCES:
   CellAnimator:
-    :path: CellAnimator
+    :path: TodoApp/CellAnimator
   MyColors:
-    :path: MyColors
+    :path: TodoApp/MyColors
 
 SPEC CHECKSUMS:
   CellAnimator: 52b0da46321a92bd09ccb1f1401af028fb95984a
@@ -29,6 +29,6 @@ SPEC CHECKSUMS:
   MyColors: cd044d093e80fd7137f8b85d6844ce471676a43f
   SwiftLint: 284cea64b6187c5d6bd83e9a548a64104d546447
 
-PODFILE CHECKSUM: 0aba35e9a4eee90c05839ec5893091a286aee5fb
+PODFILE CHECKSUM: dad185a18f34684cc84bd9479c338908439f61ac
 
 COCOAPODS: 1.11.3
