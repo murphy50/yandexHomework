@@ -3,28 +3,27 @@ import CocoaLumberjack
 import CellAnimator
 import MyColors
 
-var fileCache = FileCache()
+final class MainViewController: UIViewController, CacheDelegate {
 
-final class MainViewController: UIViewController {
-    
     // MARK: - Private properties
     
+    private var cache = Cache(FileCacheService(), NetworkService())
     private var toDoItems: [TodoItem] = []
     private var tapIndex: IndexPath?
     private var isShowAll: Bool = false
     private  var headerView: MainTableHeaderView?
     
-    private func update() {
+    func updateTodoItems() {
         updateModel()
         mainTable.reloadData()
         updateHeader()
     }
-    
+
     private func updateHeader() {
         if let headerView = headerView {
-            headerView.configure(isShowAll: isShowAll, completedTasksNumber: fileCache.completedTasks)
+            headerView.configure(isShowAll: isShowAll, completedTasksNumber: cache.completedTasks)
         } else {
-            headerView = MainTableHeaderView(isShowAll: isShowAll, completedTasksNumber: fileCache.completedTasks)
+            headerView = MainTableHeaderView(isShowAll: isShowAll, completedTasksNumber: cache.completedTasks)
         }
     }
     private lazy var mainTable: UITableView = {
@@ -61,28 +60,14 @@ final class MainViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        // DDLog.add(DDOSLogger.sharedInstance) // Uses os_log
-
-        let fileLogger: DDFileLogger = DDFileLogger() // File Logger
-        fileLogger.rollingFrequency = 60 * 60 * 24 // 24 hours
-        fileLogger.logFileManager.maximumNumberOfLogFiles = 7
-               DDLog.add(fileLogger)
-        DDLogInfo("MainViewController did appear")
-        if fileCache.isEmpty(file: "testTodoInput2.json") ?? true {
-            fileCache.loadTestFile("testTodoInput2.json")
-        } else {
-            fileCache.load(from: "testTodoInput2.json")
-        }
-        update()
-        // updateWithCleanModel()(
+        cache.delegate = self
+        cache.load()
         configureNavbar()
-        headerView = MainTableHeaderView(isShowAll: isShowAll, completedTasksNumber: fileCache.completedTasks)
+        headerView = MainTableHeaderView(isShowAll: isShowAll, completedTasksNumber: cache.completedTasks)
         
-        // let headerView = MainTableHeaderUIView()
         view.backgroundColor = ColorPalette.backPrimary.color
         view.addSubview(mainTable)
         view.addSubview(addItemButton)
-        // mainTable.tableHeaderView = headerView
         mainTable.delegate = self
         mainTable.dataSource = self
         
@@ -106,10 +91,7 @@ extension MainViewController: UITableViewDelegate, UITableViewDataSource {
     private func delete(rowIndexPathAt indexPath: IndexPath) -> UIContextualAction {
         let action = UIContextualAction(style: .destructive, title: nil) { [weak self] _, _, _ in
             guard let id = self?.toDoItems[indexPath.row].id else { return }
-            fileCache.delete(id)
-            self?.update()
-            //            self?.mainTable.deleteRows(at: [indexPath], with: .automatic)
-            //            self?.mainTable.reloadData()
+            self?.cache.delete(id: id)
         }
         action.image = UIImage(systemName: "trash.fill")
         action.backgroundColor = ColorPalette.red.color
@@ -125,14 +107,13 @@ extension MainViewController: UITableViewDelegate, UITableViewDataSource {
     private func complete(rowIndexPathAt indexPath: IndexPath) -> UIContextualAction {
         let action = UIContextualAction(style: .normal, title: nil) { [ weak self] _, _, _ in
             guard let item = self?.toDoItems[indexPath.row] else { return }
-            fileCache.add(TodoItem(id: item.id,
+            self?.cache.add(TodoItem(id: item.id,
                                    text: item.text,
                                    importance: item.importance, deadline: item.deadline,
                                    done: true,
                                    color: item.color,
                                    creationDate: item.creationDate,
                                    changeDate: item.changeDate))
-            self?.update()
         }
         action.image = UIImage(systemName: "checkmark.circle.fill")
         action.backgroundColor = ColorPalette.green.color
@@ -195,7 +176,7 @@ extension MainViewController: UITableViewDelegate, UITableViewDataSource {
         guard let header = headerView else { return nil }
         header.action = { [weak self] isShowAll in
             self?.isShowAll = isShowAll
-            self?.update()
+            self?.updateTodoItems()
         }
         return header
     }
@@ -222,11 +203,9 @@ extension MainViewController: DetailsViewControllerDelegate {
     
     func toDoItemCreated(model: TodoItem, beingDeleted: Bool) {
         if beingDeleted {
-            fileCache.delete(model.id)
-            update()
+            cache.delete(id: model.id)
         } else {
-            fileCache.add(model)
-            update()
+            cache.add(model)
         }
     }
     
@@ -238,9 +217,9 @@ private extension MainViewController {
     
     func updateModel() {
         if isShowAll {
-            toDoItems = Array(fileCache.todoItems.values.sorted { $0.creationDate < $1.creationDate})
+            toDoItems = Array(cache.todoItems.values.sorted { $0.creationDate < $1.creationDate})
         } else {
-            let cleanDictionary = fileCache.todoItems.values.filter({ todoItem in
+            let cleanDictionary = cache.todoItems.values.filter({ todoItem in
                 !todoItem.done && !(todoItem.importance == .important)
             })
             toDoItems = cleanDictionary.sorted { $0.creationDate < $1.creationDate }
