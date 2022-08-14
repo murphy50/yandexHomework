@@ -7,6 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		0D4E494928A91F240053CD71 /* FileCacheService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0D4E494828A91F240053CD71 /* FileCacheService.swift */; };
+		0D4E494B28A920700053CD71 /* NetworkService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0D4E494A28A920700053CD71 /* NetworkService.swift */; };
 		0D79B04328A2F24D00FCD0BB /* testTodoInput2.json in Resources */ = {isa = PBXBuildFile; fileRef = 0D79B04228A2F24D00FCD0BB /* testTodoInput2.json */; };
 		0DA99B1F289E3F2A00C01052 /* MainTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0DA99B1E289E3F2900C01052 /* MainTableViewCell.swift */; };
 		0DA99B21289EAD9700C01052 /* MainTableHeaderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0DA99B20289EAD9700C01052 /* MainTableHeaderView.swift */; };
@@ -15,7 +17,7 @@
 		0DD390E82896D3B7008CD29E /* MainViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0DD390E72896D3B7008CD29E /* MainViewController.swift */; };
 		0DD390F82896D3FF008CD29E /* DetailsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0DD390F72896D3FF008CD29E /* DetailsViewController.swift */; };
 		0DD390FA28971DA6008CD29E /* TodoItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0DD390F928971DA6008CD29E /* TodoItem.swift */; };
-		0DD390FC28977BB5008CD29E /* FileCache.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0DD390FB28977BB5008CD29E /* FileCache.swift */; };
+		0DD390FC28977BB5008CD29E /* Cache.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0DD390FB28977BB5008CD29E /* Cache.swift */; };
 		0DD391072897A978008CD29E /* TodoAppTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0DD391062897A978008CD29E /* TodoAppTests.swift */; };
 		0DD3910E2897AC7B008CD29E /* testTodoInput.json in Resources */ = {isa = PBXBuildFile; fileRef = 0DD3910D2897AC7B008CD29E /* testTodoInput.json */; };
 		0DE1CCBF28B1448200A766EE /* Logger.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0DE1CCBE28B1448200A766EE /* Logger.swift */; };
@@ -35,6 +37,8 @@
 
 /* Begin PBXFileReference section */
 		017E191B957CA4A260A91CF9 /* Pods_TodoApp.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_TodoApp.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		0D4E494828A91F240053CD71 /* FileCacheService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FileCacheService.swift; sourceTree = "<group>"; };
+		0D4E494A28A920700053CD71 /* NetworkService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NetworkService.swift; sourceTree = "<group>"; };
 		0D79B04228A2F24D00FCD0BB /* testTodoInput2.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = testTodoInput2.json; sourceTree = "<group>"; };
 		0DA99B1E289E3F2900C01052 /* MainTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainTableViewCell.swift; sourceTree = "<group>"; };
 		0DA99B20289EAD9700C01052 /* MainTableHeaderView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainTableHeaderView.swift; sourceTree = "<group>"; };
@@ -45,7 +49,7 @@
 		0DD390F12896D3BA008CD29E /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		0DD390F72896D3FF008CD29E /* DetailsViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DetailsViewController.swift; sourceTree = "<group>"; };
 		0DD390F928971DA6008CD29E /* TodoItem.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TodoItem.swift; sourceTree = "<group>"; };
-		0DD390FB28977BB5008CD29E /* FileCache.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FileCache.swift; sourceTree = "<group>"; };
+		0DD390FB28977BB5008CD29E /* Cache.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Cache.swift; sourceTree = "<group>"; };
 		0DD391042897A978008CD29E /* TodoAppTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = TodoAppTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		0DD391062897A978008CD29E /* TodoAppTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TodoAppTests.swift; sourceTree = "<group>"; };
 		0DD3910D2897AC7B008CD29E /* testTodoInput.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = testTodoInput.json; sourceTree = "<group>"; };
@@ -74,14 +78,6 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
-		0DA99B1D289DCC2F00C01052 /* Utilities */ = {
-			isa = PBXGroup;
-			children = (
-				0DE1CCBE28B1448200A766EE /* Logger.swift */,
-			);
-			path = Utilities;
-			sourceTree = "<group>";
-		};
 		0DC13F2228A1A98D007DC04C /* Controllers */ = {
 			isa = PBXGroup;
 			children = (
@@ -128,12 +124,13 @@
 				0DC13F2328A1A99D007DC04C /* Views */,
 				0DC13F2228A1A98D007DC04C /* Controllers */,
 				0DD390F928971DA6008CD29E /* TodoItem.swift */,
-				0DD390FB28977BB5008CD29E /* FileCache.swift */,
+				0DD390FB28977BB5008CD29E /* Cache.swift */,
+				0D4E494828A91F240053CD71 /* FileCacheService.swift */,
+				0D4E494A28A920700053CD71 /* NetworkService.swift */,
 				0DF4FA6D28A7F7EA00879E68 /* Assets.xcassets */,
 				0DD390F12896D3BA008CD29E /* Info.plist */,
 				0DD3910D2897AC7B008CD29E /* testTodoInput.json */,
 				0D79B04228A2F24D00FCD0BB /* testTodoInput2.json */,
-				0DA99B1D289DCC2F00C01052 /* Utilities */,
 			);
 			path = TodoApp;
 			sourceTree = "<group>";
@@ -327,13 +324,15 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				0D4E494B28A920700053CD71 /* NetworkService.swift in Sources */,
 				0DD390FA28971DA6008CD29E /* TodoItem.swift in Sources */,
 				0DA99B1F289E3F2A00C01052 /* MainTableViewCell.swift in Sources */,
 				0DD390E82896D3B7008CD29E /* MainViewController.swift in Sources */,
+				0D4E494928A91F240053CD71 /* FileCacheService.swift in Sources */,
 				0DD390E42896D3B7008CD29E /* AppDelegate.swift in Sources */,
 				0DE1CCBF28B1448200A766EE /* Logger.swift in Sources */,
 				0DD390E62896D3B7008CD29E /* SceneDelegate.swift in Sources */,
-				0DD390FC28977BB5008CD29E /* FileCache.swift in Sources */,
+				0DD390FC28977BB5008CD29E /* Cache.swift in Sources */,
 				0DD390F82896D3FF008CD29E /* DetailsViewController.swift in Sources */,
 				0DA99B21289EAD9700C01052 /* MainTableHeaderView.swift in Sources */,
 			);
