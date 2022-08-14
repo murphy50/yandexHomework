@@ -65,14 +65,8 @@ final class MainViewController: UIViewController, CacheDelegate {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        Logger.log("MainViewController did appear")
-        if fileCache.isEmpty(file: "testTodoInput2.json") ?? true {
-            fileCache.loadTestFile("testTodoInput2.json")
-        } else {
-            fileCache.load(from: "testTodoInput2.json")
-        }
-        update()
-        // updateWithCleanModel()(
+        cache.delegate = self
+        cache.load()
         configureNavbar()
         headerView = MainTableHeaderView(isShowAll: isShowAll, completedTasksNumber: cache.completedTasks)
         
