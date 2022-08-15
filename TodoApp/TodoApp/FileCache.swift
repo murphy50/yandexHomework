@@ -1,44 +1,39 @@
 import Foundation
 
 
-class FileCache {
-    var todoItems: [TodoItem] = []
-    
-    func isUnique(_ item: TodoItem) -> Bool {
-        !todoItems.contains {$0.id == item.id }
-    }
+final class FileCache {
+    private(set) var todoItems: [String: TodoItem] = [:]
     
     func add(_ item: TodoItem) {
-        if isUnique(item) {
-            todoItems.append(item)
-        } else {
-            print("not unique item")
-        }
+        todoItems[item.id] = item
     }
     
     func delete(_ itemID: String) {
-        guard let removableIndex = todoItems.firstIndex(where: { $0.id == itemID }) else {
-            return
-        }
-        todoItems.remove(at: removableIndex)
+        todoItems.removeValue(forKey: itemID)
+    }
+    
+    var completedTasks: Int {
+        todoItems.filter({ $0.value.done }).count
+    }
+    
+    var getArray: [TodoItem] {
+        Array(todoItems.values.sorted { $0.creationDate < $1.creationDate})
     }
     
     func save(to file: String) {
         guard let documentDirectory = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first else {
-            print("Directory not found")
             return
         }
         let fileURL = documentDirectory.appendingPathComponent(file)
         
-        var dictionary: [[String: Any]] = []
-        
-        for todoItem in todoItems {
-            guard let item = todoItem.json as? [String: Any] else { continue }
-            dictionary.append(item)
+        var jsonArray: [Any] = []
+        for todoItem in todoItems.values {
+            let item = todoItem.json
+            jsonArray.append(item)
         }
         do {
-            let jsonData = try JSONSerialization.data(withJSONObject: dictionary, options: .init(rawValue: 0)) as? Data
-            try jsonData?.write(to: fileURL)
+            let jsonData = try JSONSerialization.data(withJSONObject: jsonArray)
+            try jsonData.write(to: fileURL)
         } catch {
             print(error.localizedDescription)
         }
@@ -46,40 +41,69 @@ class FileCache {
     
     func load(from file: String) {
         guard let documentDirectory = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first else {
-            print("Directory not found")
             return
         }
-        
         let fileURL = documentDirectory.appendingPathComponent(file)
-        
         var data: Data?
         do {
             data = try Data(contentsOf: fileURL)
         } catch {
             print(error.localizedDescription)
         }
-        guard let correctData = data else {
-            print("data isn't correct")
-            return
-        }
-        
-        var dictionary: [String: Any]? = [:]
+        guard let correctData = data else { return }
         do {
-            dictionary = try JSONSerialization.jsonObject(with: correctData) as? [String: Any]
+            if let jsonArray = try JSONSerialization.jsonObject(with: correctData) as? [Any] {
+                for item in jsonArray {
+                    guard let toDoItem = TodoItem.parse(json: item) else { continue }
+                    add(toDoItem)
+                }
+            }
         } catch {
             print(error.localizedDescription)
         }
+    }
+    
+    func isEmpty(file: String) -> Bool? {
+        guard let documentDirectory = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first else {
+            return nil
+        }
+        let fileURL = documentDirectory.appendingPathComponent(file)
+        var content: String?
+        do {
+            content = try String(contentsOf: fileURL)
+        } catch {
+            print(error.localizedDescription)
+        }
+        if let content = content {
+            return (content.isEmpty || content.count <= 2)
+        }
+        return nil
+    }
+    
+    func loadTestFile(_ file: String) {
         
-        if let dictionary = dictionary, let items = dictionary["list"] as? [[String: Any]] {
-            for item in items {
-                guard let toDoItem = TodoItem.parse(json: item) else {
-                    print("Couldn't parse the json item to ToDoItem ")
-                    continue
-                }
-                add(toDoItem)
+        var contents = ""
+        if let filepath = Bundle.main.path(forResource: file, ofType: nil) {
+            do {
+                contents = try String(contentsOfFile: filepath)
+            } catch {
+                print("contents could not be loaded")
             }
         } else {
-            print("Serialization can't return an object")
+            print("test file not found")
+        }
+        
+        if !contents.isEmpty {
+            if let dir = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first {
+                
+                let fileURL = dir.appendingPathComponent(file)
+                do {
+                    try contents.write(to: fileURL, atomically: false, encoding: .utf8)
+                    load(from: file)
+                } catch {
+                    
+                }
+            }
         }
     }
 }
