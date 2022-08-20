@@ -20,6 +20,7 @@
 		0DD390FC28977BB5008CD29E /* Cache.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0DD390FB28977BB5008CD29E /* Cache.swift */; };
 		0DD391072897A978008CD29E /* TodoAppTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0DD391062897A978008CD29E /* TodoAppTests.swift */; };
 		0DD3910E2897AC7B008CD29E /* testTodoInput.json in Resources */ = {isa = PBXBuildFile; fileRef = 0DD3910D2897AC7B008CD29E /* testTodoInput.json */; };
+		0DE1CCBF28B1448200A766EE /* Logger.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0DE1CCBE28B1448200A766EE /* Logger.swift */; };
 		0DF4FA6E28A7F7EA00879E68 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 0DF4FA6D28A7F7EA00879E68 /* Assets.xcassets */; };
 		8499DA7A6F222E67215A32C2 /* Pods_TodoApp.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 017E191B957CA4A260A91CF9 /* Pods_TodoApp.framework */; };
 /* End PBXBuildFile section */
@@ -52,6 +53,7 @@
 		0DD391042897A978008CD29E /* TodoAppTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = TodoAppTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		0DD391062897A978008CD29E /* TodoAppTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TodoAppTests.swift; sourceTree = "<group>"; };
 		0DD3910D2897AC7B008CD29E /* testTodoInput.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = testTodoInput.json; sourceTree = "<group>"; };
+		0DE1CCBE28B1448200A766EE /* Logger.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Logger.swift; sourceTree = "<group>"; };
 		0DF4FA6D28A7F7EA00879E68 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		3D729D40D71D2F690F6AC7F8 /* Pods-TodoApp.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-TodoApp.release.xcconfig"; path = "Target Support Files/Pods-TodoApp/Pods-TodoApp.release.xcconfig"; sourceTree = "<group>"; };
 		9234484ED9E130EFD77E611C /* Pods-TodoApp.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-TodoApp.debug.xcconfig"; path = "Target Support Files/Pods-TodoApp/Pods-TodoApp.debug.xcconfig"; sourceTree = "<group>"; };
@@ -76,6 +78,14 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		0DA99B1D289DCC2F00C01052 /* Utilities */ = {
+			isa = PBXGroup;
+			children = (
+				0DE1CCBE28B1448200A766EE /* Logger.swift */,
+			);
+			path = Utilities;
+			sourceTree = "<group>";
+		};
 		0DC13F2228A1A98D007DC04C /* Controllers */ = {
 			isa = PBXGroup;
 			children = (
@@ -328,6 +338,7 @@
 				0DD390E82896D3B7008CD29E /* MainViewController.swift in Sources */,
 				0D4E494928A91F240053CD71 /* FileCacheService.swift in Sources */,
 				0DD390E42896D3B7008CD29E /* AppDelegate.swift in Sources */,
+				0DE1CCBF28B1448200A766EE /* Logger.swift in Sources */,
 				0DD390E62896D3B7008CD29E /* SceneDelegate.swift in Sources */,
 				0DD390FC28977BB5008CD29E /* Cache.swift in Sources */,
 				0DD390F82896D3FF008CD29E /* DetailsViewController.swift in Sources */,

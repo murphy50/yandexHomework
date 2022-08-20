@@ -1,9 +1,7 @@
-//
-//  SceneDelegate.swift
-//  TodoApp
-//
-//  Created by murphy on 7/31/22.
-//
+// Created for YandexMobileSchool in 2022
+// by Murphy
+// Using Swift 5.0
+// Running on macOS 12.5
 
 import UIKit
 
