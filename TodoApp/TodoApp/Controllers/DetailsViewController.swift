@@ -1,15 +1,20 @@
-import UIKit
+// Created for YandexMobileSchool in 2022
+// by Murphy
+// Using Swift 5.0
+// Running on macOS 12.5
 
+import UIKit
+import MyColors
 
 // MARK: - DetailsVCDelegate
 
 protocol DetailsViewControllerDelegate: AnyObject {
-    func ToDoItemCreated(model: TodoItem, beingDeleted: Bool)
+    func toDoItemCreated(model: TodoItem, beingDeleted: Bool)
 }
 
-// MARK:  DetailsViewController
+// MARK: - DetailsViewController
+
 final class DetailsViewController: UIViewController {
-    
     
     // MARK: - Public properties
     
@@ -20,7 +25,7 @@ final class DetailsViewController: UIViewController {
     
     private var model: TodoItem
     
-    // MARK: -  Navitgation Bar
+    // MARK: - Navitgation Bar
     
     private func configureNavbar() {
         navigationItem.title = "Задание"
@@ -43,7 +48,6 @@ final class DetailsViewController: UIViewController {
         textView.translatesAutoresizingMaskIntoConstraints = false
         return textView
     }()
-    
     
     // MARK: - Views
     
@@ -92,7 +96,7 @@ final class DetailsViewController: UIViewController {
         let segmentedControl = UISegmentedControl(items: [
             UIImage(systemName: "arrow.down")!,
             "Нет",
-            UIImage(systemName: "exclamationmark.2")!.withTintColor(ColorPalette.red.color, renderingMode: .alwaysOriginal),
+            UIImage(systemName: "exclamationmark.2")!.withTintColor(ColorPalette.red.color, renderingMode: .alwaysOriginal)
         ])
         segmentedControl.selectedSegmentIndex = 1
         segmentedControl.addTarget(self, action: #selector(segmentedControlDidChange(target:)), for: .valueChanged)
@@ -128,7 +132,6 @@ final class DetailsViewController: UIViewController {
         return stackView
     }()
     
-    
     private lazy var deadlineView: UIView = {
         let stackView = UIStackView()
         stackView.axis = .horizontal
@@ -149,7 +152,6 @@ final class DetailsViewController: UIViewController {
         stackView.addArrangedSubview(mySwitch)
         return stackView
     }()
-    
     
     private lazy var calendar: UIDatePicker = {
         let calendar = UIDatePicker()
@@ -179,13 +181,11 @@ final class DetailsViewController: UIViewController {
         button.setTitle("Удалить", for: .normal)
         button.layer.cornerRadius = 16
         
-        
         button.setTitleColor(ColorPalette.red.color, for: .normal)
         button.addTarget(self, action: #selector(deleteToDoItem), for: .touchDown)
         button.translatesAutoresizingMaskIntoConstraints = false
         return button
     }()
-    
     
     private func configure(with model: TodoItem) {
         set(with: model.importance)
@@ -193,10 +193,9 @@ final class DetailsViewController: UIViewController {
         set(with: model.deadline)
     }
     
-    
     // MARK: - Init
     
-    init(with model: TodoItem)   {
+    init(with model: TodoItem) {
         self.model = model
         super.init(nibName: nil, bundle: nil)
         configure(with: model)
@@ -212,7 +211,6 @@ final class DetailsViewController: UIViewController {
         NotificationCenter.default.removeObserver(self)
     }
 }
-
 
 // MARK: - override
 
@@ -238,7 +236,6 @@ extension DetailsViewController {
         
     }
 }
-
 
 // MARK: - Private methods
 
@@ -291,11 +288,10 @@ private extension DetailsViewController {
             deleteButton.topAnchor.constraint(equalTo: stackView.bottomAnchor, constant: 16),
             deleteButton.leadingAnchor.constraint(equalTo: scrollView.leadingAnchor, constant: 16),
             deleteButton.heightAnchor.constraint(equalToConstant: 56),
-            deleteButton.trailingAnchor.constraint(equalTo: scrollView.trailingAnchor, constant: -16),
+            deleteButton.trailingAnchor.constraint(equalTo: scrollView.trailingAnchor, constant: -16)
         ])
     }
 }
-
 
 // MARK: - UITextViewDelegate
 
@@ -332,7 +328,6 @@ extension DetailsViewController: UITextViewDelegate {
     }
 }
 
-
 // MARK: - Actions
 
 extension DetailsViewController {
@@ -347,7 +342,7 @@ extension DetailsViewController {
     }
     
     @objc func deleteToDoItem() {
-        delegate?.ToDoItemCreated(model: model, beingDeleted: true)
+        delegate?.toDoItemCreated(model: model, beingDeleted: true)
         navigationController?.dismiss(animated: true)
     }
     @objc func dismissKeyboard() {
@@ -356,7 +351,7 @@ extension DetailsViewController {
     
     @objc func saveToDoItem() {
         textViewDidEndEditing(textView)
-        delegate?.ToDoItemCreated(model: model, beingDeleted: beingDeleted)
+        delegate?.toDoItemCreated(model: model, beingDeleted: beingDeleted)
         navigationController?.dismiss(animated: true)
         
     }

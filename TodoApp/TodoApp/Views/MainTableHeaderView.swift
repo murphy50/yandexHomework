@@ -1,7 +1,13 @@
+// Created for YandexMobileSchool in 2022
+// by Murphy
+// Using Swift 5.0
+// Running on macOS 12.5
+
 import Foundation
 import UIKit
+import MyColors
 
-final class MainTableHeaderView:  UIView {
+final class MainTableHeaderView: UIView {
     
     var action: ((Bool) -> Void)?
     
@@ -49,7 +55,6 @@ final class MainTableHeaderView:  UIView {
         fatalError("init(coder:) has not been implemented")
     }
 }
-
 
 // MARK: - Private methods
 

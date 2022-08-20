@@ -1,9 +1,7 @@
-//
-//  SceneDelegate.swift
-//  TodoApp
-//
-//  Created by murphy on 7/31/22.
-//
+// Created for YandexMobileSchool in 2022
+// by Murphy
+// Using Swift 5.0
+// Running on macOS 12.5
 
 import UIKit
 
@@ -46,7 +44,4 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         // Use this method to save data, release shared resources, and store enough scene-specific state information
         // to restore the scene back to its current state.
     }
-    
-    
 }
-

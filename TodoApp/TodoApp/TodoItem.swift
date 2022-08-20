@@ -1,5 +1,10 @@
-import Foundation
+// Created for YandexMobileSchool in 2022
+// by Murphy
+// Using Swift 5.0
+// Running on macOS 12.5
 
+import Foundation
+import MyColors
 
 struct TodoItem {
     enum Importance: String {
@@ -34,7 +39,7 @@ struct TodoItem {
 }
 
 extension TodoItem {
-    static func parse(json: Any) -> TodoItem?{
+    static func parse(json: Any) -> TodoItem? {
         guard let jsonObject = json as? [String: Any] else { return nil }
         
         guard let id = jsonObject["id"] as? String else { return nil }
@@ -82,4 +87,3 @@ extension TodoItem {
         return dict
     }
 }
-
