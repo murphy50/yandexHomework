@@ -78,6 +78,14 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		0DA99B1D289DCC2F00C01052 /* Utilities */ = {
+			isa = PBXGroup;
+			children = (
+				0DE1CCBE28B1448200A766EE /* Logger.swift */,
+			);
+			path = Utilities;
+			sourceTree = "<group>";
+		};
 		0DC13F2228A1A98D007DC04C /* Controllers */ = {
 			isa = PBXGroup;
 			children = (
