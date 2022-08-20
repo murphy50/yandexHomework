@@ -33,7 +33,12 @@ TODO: Add long description of the pod here.
   s.source_files = 'MyColors/Classes/**/*'
   
    s.resource_bundles = {
-     'MyColors' => ['MyColors/Assets/*']
+     'Resources' => ['MyColors/Assets/*']
+   }
+   s.resources = 'Pod/Resources/**/*'
+   
+   s.info_plist = {
+     'CFBundleIdentifier' => 'com.murphy.colorPalette'
    }
 
   # s.public_header_files = 'Pod/Classes/**/*.h'
