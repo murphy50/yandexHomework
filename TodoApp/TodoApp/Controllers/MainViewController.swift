@@ -1,3 +1,8 @@
+// Created for YandexMobileSchool in 2022
+// by Murphy
+// Using Swift 5.0
+// Running on macOS 12.5
+
 import UIKit
 import CocoaLumberjack
 import CellAnimator
@@ -61,13 +66,7 @@ final class MainViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        // DDLog.add(DDOSLogger.sharedInstance) // Uses os_log
-
-        let fileLogger: DDFileLogger = DDFileLogger() // File Logger
-        fileLogger.rollingFrequency = 60 * 60 * 24 // 24 hours
-        fileLogger.logFileManager.maximumNumberOfLogFiles = 7
-               DDLog.add(fileLogger)
-        DDLogInfo("MainViewController did appear")
+        Logger.log("MainViewController did appear")
         if fileCache.isEmpty(file: "testTodoInput2.json") ?? true {
             fileCache.loadTestFile("testTodoInput2.json")
         } else {
