@@ -18,7 +18,7 @@ final class MainTableViewCell: UITableViewCell {
     private let circleView: UIImageView = {
         let view = UIImageView()
         view.layer.cornerRadius = 12
-        view.image = UIImage(systemName: "circle")
+        // view.image = UIImage(systemName: "circle".)
         view.tintColor = .red
         view.backgroundColor = ColorPalette.gray.color
         view.layer.opacity = 0.2

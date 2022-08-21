@@ -4,7 +4,7 @@
 // Running on macOS 12.5
 
 import UIKit
-import CocoaLumberjack
+
 @main
 class AppDelegate: UIResponder, UIApplicationDelegate {
     

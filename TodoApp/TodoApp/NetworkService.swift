@@ -1,6 +1,14 @@
-import Foundation
-import CocoaLumberjack
+// Created for YandexMobileSchool in 2022
+// by Murphy
+// Using Swift 5.0
+// Running on macOS 12.5
 
+import Foundation
+
+func currentQueueName() -> String? {
+    let name = __dispatch_queue_get_label(nil)
+    return String(cString: name, encoding: .utf8)
+}
 protocol NetworkServiceProtocol {
     
     func getAllTodoItems(completion: @escaping (Result<[TodoItem], Error>) -> Void)
@@ -18,14 +26,14 @@ enum NetworkError: Error {
 final class NetworkService: NetworkServiceProtocol {
     
     private let queue = DispatchQueue(label: "networkServiceQueue")
-    
+
     func getAllTodoItems(completion: @escaping (Result<[TodoItem], Error>) -> Void) {
         queue.async {
             guard let url = URL(string: "https://jsonplaceholder.typicode.com/posts") else { return }
             let task = URLSession.shared.dataTask(with: URLRequest(url: url)) { data, _, error in
                 guard let data = data, !data.isEmpty, error == nil else { return }
                 do {
-                    DDLogInfo("Successful files receiving from network")
+                    Logger.log("Successful files receiving from network")
                     DispatchQueue.main.async {
                         completion(.success([TodoItem(text: "network:1"),
                                              TodoItem(text: "network:2"),

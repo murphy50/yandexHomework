@@ -4,15 +4,14 @@
 // Running on macOS 12.5
 
 import UIKit
-import CocoaLumberjack
 import CellAnimator
 import MyColors
 
-final class MainViewController: UIViewController, CacheDelegate {
+final class MainViewController: UIViewController, TodoItemServiceDelegate {
 
     // MARK: - Private properties
     
-    private var cache = Cache(FileCacheService(), NetworkService())
+    private var todoItemService = TodoItemService(FileCacheService(), NetworkService())
     private var toDoItems: [TodoItem] = []
     private var tapIndex: IndexPath?
     private var isShowAll: Bool = false
@@ -26,9 +25,9 @@ final class MainViewController: UIViewController, CacheDelegate {
 
     private func updateHeader() {
         if let headerView = headerView {
-            headerView.configure(isShowAll: isShowAll, completedTasksNumber: cache.completedTasks)
+            headerView.configure(isShowAll: isShowAll, completedTasksNumber: todoItemService.completedTasks)
         } else {
-            headerView = MainTableHeaderView(isShowAll: isShowAll, completedTasksNumber: cache.completedTasks)
+            headerView = MainTableHeaderView(isShowAll: isShowAll, completedTasksNumber: todoItemService.completedTasks)
         }
     }
     private lazy var mainTable: UITableView = {
@@ -58,17 +57,17 @@ final class MainViewController: UIViewController, CacheDelegate {
     @objc func createNewItem() {
         let vc = DetailsViewController(with: TodoItem(text: ""))
         vc.delegate = self
-        present( UINavigationController(rootViewController: vc), animated: true)
+        present(UINavigationController(rootViewController: vc), animated: true)
     }
     
     // MARK: - viewDidLoad
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        cache.delegate = self
-        cache.load()
+        todoItemService.delegate = self
+        todoItemService.load()
         configureNavbar()
-        headerView = MainTableHeaderView(isShowAll: isShowAll, completedTasksNumber: cache.completedTasks)
+        headerView = MainTableHeaderView(isShowAll: isShowAll, completedTasksNumber: todoItemService.completedTasks)
         
         view.backgroundColor = ColorPalette.backPrimary.color
         view.addSubview(mainTable)
@@ -96,7 +95,7 @@ extension MainViewController: UITableViewDelegate, UITableViewDataSource {
     private func delete(rowIndexPathAt indexPath: IndexPath) -> UIContextualAction {
         let action = UIContextualAction(style: .destructive, title: nil) { [weak self] _, _, _ in
             guard let id = self?.toDoItems[indexPath.row].id else { return }
-            self?.cache.delete(id: id)
+            self?.todoItemService.delete(id: id)
         }
         action.image = UIImage(systemName: "trash.fill")
         action.backgroundColor = ColorPalette.red.color
@@ -112,7 +111,7 @@ extension MainViewController: UITableViewDelegate, UITableViewDataSource {
     private func complete(rowIndexPathAt indexPath: IndexPath) -> UIContextualAction {
         let action = UIContextualAction(style: .normal, title: nil) { [ weak self] _, _, _ in
             guard let item = self?.toDoItems[indexPath.row] else { return }
-            self?.cache.add(TodoItem(id: item.id,
+            self?.todoItemService.add(TodoItem(id: item.id,
                                    text: item.text,
                                    importance: item.importance, deadline: item.deadline,
                                    done: true,
@@ -208,9 +207,9 @@ extension MainViewController: DetailsViewControllerDelegate {
     
     func toDoItemCreated(model: TodoItem, beingDeleted: Bool) {
         if beingDeleted {
-            cache.delete(id: model.id)
+            todoItemService.delete(id: model.id)
         } else {
-            cache.add(model)
+            todoItemService.add(model)
         }
     }
     
@@ -222,9 +221,9 @@ private extension MainViewController {
     
     func updateModel() {
         if isShowAll {
-            toDoItems = Array(cache.todoItems.values.sorted { $0.creationDate < $1.creationDate})
+            toDoItems = Array(todoItemService.todoItems.values.sorted { $0.creationDate < $1.creationDate})
         } else {
-            let cleanDictionary = cache.todoItems.values.filter({ todoItem in
+            let cleanDictionary = todoItemService.todoItems.values.filter({ todoItem in
                 !todoItem.done && !(todoItem.importance == .important)
             })
             toDoItems = cleanDictionary.sorted { $0.creationDate < $1.creationDate }
