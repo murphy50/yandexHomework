@@ -1,5 +1,9 @@
+// Created for YandexMobileSchool in 2022
+// by Murphy
+// Using Swift 5.0
+// Running on macOS 12.5
+
 import Foundation
-import CocoaLumberjack
 
 protocol FileCacheServiceProtocol {
     
@@ -39,7 +43,7 @@ class FileCacheService: FileCacheServiceProtocol {
             do {
                 let jsonData = try JSONSerialization.data(withJSONObject: jsonArray)
                 try jsonData.write(to: fileURL)
-                DDLogInfo("Files were successfully written to drive")
+                Logger.log("Files were successfully written to drive")
                 DispatchQueue.main.async {
                     completion(.success(()))
                 }
@@ -72,7 +76,7 @@ class FileCacheService: FileCacheServiceProtocol {
                         guard let toDoItem = TodoItem.parse(json: item) else { continue }
                         toDoItems[toDoItem.id] = toDoItem
                     }
-                    DDLogInfo("Successful files receiving from drive")
+                    Logger.log("Successful files receiving from drive")
                     DispatchQueue.main.async {
                         completion(.success(toDoItems))
                     }

@@ -1,15 +1,19 @@
-import Foundation
-import CocoaLumberjack
+// Created for YandexMobileSchool in 2022
+// by Murphy
+// Using Swift 5.0
+// Running on macOS 12.5
 
-protocol CacheDelegate: AnyObject {
+import Foundation
+
+protocol TodoItemServiceDelegate: AnyObject {
     func updateTodoItems()
 }
 
-final class Cache {
+final class TodoItemService {
     
-    private(set) var fileCache: FileCacheService
-    private(set) var network: NetworkService
-    weak var delegate: CacheDelegate?
+    private var fileCache: FileCacheService
+    private var network: NetworkService
+    weak var delegate: TodoItemServiceDelegate?
     private(set) var todoItems: [String: TodoItem] = [:] {
         didSet {
             delegate?.updateTodoItems()
@@ -24,7 +28,7 @@ final class Cache {
     
     func load() {
         // Рандомный выбор для дебага загрузки из разных источников
-        if Bool.random() {
+        if true {
             network.getAllTodoItems { result in
                 switch result {
                 case .success(let todoItems):
@@ -35,7 +39,7 @@ final class Cache {
                     print(error.localizedDescription)
                 }
             }
-            self.saveToDrive()
+           // self.saveToDrive()
         } else {
             fileCache.load { result in
                 switch result {
@@ -52,7 +56,7 @@ final class Cache {
         fileCache.save(todoItems: todoItems) { result in
             switch result {
             case .success:
-                DDLogInfo("Files were successfully written to disk")
+                Logger.log("Files were successfully written to disk")
             case .failure(let error):
                 print(error.localizedDescription)
             }
@@ -80,9 +84,4 @@ final class Cache {
     var completedTasks: Int {
         todoItems.filter({ $0.value.done }).count
     }
-    
-    var getArray: [TodoItem] {
-        Array(todoItems.values.sorted { $0.creationDate < $1.creationDate})
-    }
-    
 }
