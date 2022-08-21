@@ -27,26 +27,21 @@ final class TodoItemService {
     }
     
     func load() {
-        // Рандомный выбор для дебага загрузки из разных источников
-        if true {
-            network.getAllTodoItems { result in
-                switch result {
-                case .success(let todoItems):
-                    for item in todoItems {
-                        self.add(item)
+        fileCache.load { result in
+            switch result {
+            case .success(let todoItems):
+                print("hello")
+                // self.todoItems = todoItems
+            case .failure:
+                self.network.getAllTodoItems { result in
+                    switch result {
+                    case .success(let todoItems):
+                        for item in todoItems {
+                            self.add(item)
+                        }
+                    case .failure(let error):
+                        print(error.localizedDescription)
                     }
-                case .failure(let error):
-                    print(error.localizedDescription)
-                }
-            }
-           // self.saveToDrive()
-        } else {
-            fileCache.load { result in
-                switch result {
-                case .success(let todoItems):
-                    self.todoItems = todoItems
-                case .failure(let error):
-                    print(error.localizedDescription)
                 }
             }
         }
@@ -63,6 +58,17 @@ final class TodoItemService {
         }
     }
     
+    func getElement(id: String) {
+        network.getTodoItem(at: id) { result in
+            switch result {
+            case .success(let item):
+                print(item)
+            case .failure(let error):
+                print(error)
+            }
+        }
+    }
+    
     func loadFromDrive() {
         fileCache.load { result in
             switch result {
@@ -75,10 +81,26 @@ final class TodoItemService {
     }
     func add(_ item: TodoItem) {
         todoItems[item.id] = item
+        network.uploadTodoItem(todoItem: item) { result in
+            switch result {
+            case .success:
+                print("success upload")
+            case .failure(let error):
+                print(error.localizedDescription)
+            }
+        }
     }
     
     func delete(id itemID: String) {
         todoItems.removeValue(forKey: itemID)
+        network.deleteTodoItem(at: itemID) { result in
+            switch result {
+            case .success:
+                print("")
+            case .failure(let error):
+                print(error)
+            }
+        }
     }
     
     var completedTasks: Int {

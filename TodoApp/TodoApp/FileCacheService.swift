@@ -19,7 +19,7 @@ enum FileCacheError: Error {
     case incorrectData
 }
 struct Constants {
-    static let testFile = "testTodoInput2.json"
+    static let testFile = "testTodoInput3.json"
 }
 
 class FileCacheService: FileCacheServiceProtocol {
@@ -56,7 +56,7 @@ class FileCacheService: FileCacheServiceProtocol {
     }
     
     func load(from file: String = Constants.testFile, completion: @escaping (Result<[String: TodoItem], Error>) -> Void) {
-        queue.async {
+        queue.sync {
             guard let documentDirectory = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first else {
                 completion(.failure(FileCacheError.gettingDirectoryError))
                 return
@@ -66,7 +66,9 @@ class FileCacheService: FileCacheServiceProtocol {
             do {
                 data = try Data(contentsOf: fileURL)
             } catch {
-                completion(.failure(FileCacheError.incorrectData))
+                DispatchQueue.main.async {
+                    completion(.failure(FileCacheError.incorrectData))
+                }
             }
             guard let correctData = data else { return }
             do {

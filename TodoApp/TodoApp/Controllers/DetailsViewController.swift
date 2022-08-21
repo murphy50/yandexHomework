@@ -197,6 +197,7 @@ final class DetailsViewController: UIViewController {
     
     init(with model: TodoItem) {
         self.model = model
+
         super.init(nibName: nil, bundle: nil)
         configure(with: model)
         NotificationCenter.default.addObserver(self, selector: #selector(onKeyboardAppear), name: UIResponder.keyboardWillShowNotification, object: nil)

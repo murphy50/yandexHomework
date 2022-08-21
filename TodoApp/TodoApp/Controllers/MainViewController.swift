@@ -66,6 +66,7 @@ final class MainViewController: UIViewController, TodoItemServiceDelegate {
         super.viewDidLoad()
         todoItemService.delegate = self
         todoItemService.load()
+        todoItemService.getElement(id: "aafa")
         configureNavbar()
         headerView = MainTableHeaderView(isShowAll: isShowAll, completedTasksNumber: todoItemService.completedTasks)
         
@@ -113,7 +114,8 @@ extension MainViewController: UITableViewDelegate, UITableViewDataSource {
             guard let item = self?.toDoItems[indexPath.row] else { return }
             self?.todoItemService.add(TodoItem(id: item.id,
                                    text: item.text,
-                                   importance: item.importance, deadline: item.deadline,
+                                   importance: item.importance,
+                                   deadline: item.deadline,
                                    done: true,
                                    color: item.color,
                                    creationDate: item.creationDate,
