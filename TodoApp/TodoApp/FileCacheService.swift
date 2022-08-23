@@ -24,7 +24,7 @@ struct Constants {
 
 class FileCacheService: FileCacheServiceProtocol {
     
-    private let queue = DispatchQueue(label: "fileCacheServiceQueue")
+    private let queue = DispatchQueue(label: "ru.murphy.toDoApp.fileCacheServiceQueue")
     
     func save(to file: String = Constants.testFile,
               todoItems: [String: TodoItem],

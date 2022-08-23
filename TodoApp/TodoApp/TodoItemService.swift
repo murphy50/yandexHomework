@@ -16,8 +16,36 @@ final class TodoItemService {
     weak var delegate: TodoItemServiceDelegate?
     private(set) var todoItems: [String: TodoItem] = [:] {
         didSet {
+            network.createPatch(with: Array(todoItems.values)) { [self] result in
+                switch result {
+                case .success(_):
+                    isDirty = false
+                case .failure(_):
+                    isDirty = true
+                }
+            }
             delegate?.updateTodoItems()
             saveToDrive()
+        }
+    }
+    private var delay: Double = 2
+    private var factor: Double = 1.5
+    private var maxDelay: Double = 120
+    private var isDirty: Bool = false {
+        didSet {
+            if isDirty == true {
+                network.createPatch(with: Array(todoItems.values), delay: delay) { [self] result in
+                    print(result, delay )
+                    switch result {
+                    case .success(_):
+                        delay = 2
+                        isDirty = false
+                    case .failure(_):
+                        delay = min(delay * factor, maxDelay) + Double.random(in: 0...0.05)
+                        isDirty = true
+                    }
+                }
+            }
         }
     }
     
@@ -30,16 +58,16 @@ final class TodoItemService {
         fileCache.load { result in
             switch result {
             case .success(let todoItems):
-                print("hello")
-                // self.todoItems = todoItems
+                self.todoItems = todoItems
             case .failure:
-                self.network.getAllTodoItems { result in
+                self.network.getAllTodoItems { [self] result in
                     switch result {
                     case .success(let todoItems):
                         for item in todoItems {
                             self.add(item)
                         }
                     case .failure(let error):
+                        isDirty = true
                         print(error.localizedDescription)
                     }
                 }
@@ -59,11 +87,12 @@ final class TodoItemService {
     }
     
     func getElement(id: String) {
-        network.getTodoItem(at: id) { result in
+        network.getTodoItem(at: id) { [self] result in
             switch result {
             case .success(let item):
                 print(item)
             case .failure(let error):
+                isDirty = true
                 print(error)
             }
         }
@@ -79,6 +108,7 @@ final class TodoItemService {
             }
         }
     }
+    
     func add(_ item: TodoItem) {
         todoItems[item.id] = item
         network.uploadTodoItem(todoItem: item) { result in
@@ -87,6 +117,9 @@ final class TodoItemService {
                 print("success upload")
             case .failure(let error):
                 print(error.localizedDescription)
+                self.isDirty = true
+                
+                
             }
         }
     }
@@ -99,6 +132,7 @@ final class TodoItemService {
                 print("")
             case .failure(let error):
                 print(error)
+                self.isDirty = true
             }
         }
     }
