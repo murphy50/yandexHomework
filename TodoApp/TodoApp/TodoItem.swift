@@ -80,20 +80,20 @@ extension TodoItem {
         dict["changeDate"] = changeDate.timeIntervalSince1970
         return dict
     }
+    
     var jsonToNetwork: Any {
         var dict: [String: Any] = [:]
         dict["id"] = id
         dict["text"] = text
         dict["importance"] = importance.rawValue
         dict["last_updated_by"] = "me"
-        dict["deadline"] = Int(deadline.timeIntervalSince1970 * 1_000_000)
+        dict["deadline"] = deadline.timeIntervalSince1970
         dict["done"] = done
         if let color = color {
             dict["color"] = color
         }
-        dict["created_at"] = Int(creationDate.timeIntervalSince1970 * 1_000_000)
-        dict["changed_at"] = Int(changeDate.timeIntervalSince1970 * 1_000_000)
-
+        dict["created_at"] = creationDate.timeIntervalSince1970
+        dict["changed_at"] = changeDate.timeIntervalSince1970
         return dict
     }
 }

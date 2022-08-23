@@ -54,12 +54,11 @@ final class TodoItemService {
         self.network = network
     }
     
-    
     func load() {
         fileCache.load { result in
             switch result {
             case .success(let todoItems):
-                if todoItems.count == 0 {
+                if todoItems.isEmpty {
                     fallthrough              // !fallthrowing
                 }
                 self.todoItems = todoItems
@@ -114,18 +113,29 @@ final class TodoItemService {
     }
     
     func add(_ item: TodoItem) {
-        todoItems[item.id] = item
-        network.uploadTodoItem(todoItem: item) { result in
-            switch result {
-            case .success:
-                print("success upload")
-            case .failure(let error):
-                print(error.localizedDescription)
-                self.isDirty = true
-                
-                
+        // FIXME: - change logic of .success
+        if todoItems.contains(where: { $0.value.id == item.id }) {
+            network.editTodoItem(todoItem: item) { result in
+                switch result {
+                case .success:
+                    print("successfully editing")
+                case .failure(let error):
+                    print(error.localizedDescription)
+                    self.isDirty = true
+                }
+            }
+        } else {
+            network.uploadTodoItem(todoItem: item) { result in
+                switch result {
+                case .success:
+                    print("successfully editing")
+                case .failure(let error):
+                    print(error.localizedDescription)
+                    self.isDirty = true
+                }
             }
         }
+        todoItems[item.id] = item
     }
     
     func delete(id itemID: String) {

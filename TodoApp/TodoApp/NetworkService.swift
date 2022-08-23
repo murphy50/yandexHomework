@@ -14,6 +14,8 @@ protocol NetworkServiceProtocol {
     
     func uploadTodoItem(todoItem: TodoItem, completion: @escaping (Result<Void, Error>) -> Void)
     
+    func editTodoItem(todoItem: TodoItem, completion: @escaping (Result<Void, Error>) -> Void)
+    
     func deleteTodoItem(at id: String, completion: @escaping (Result<Void, Error>) -> Void)
 }
 
@@ -34,7 +36,6 @@ class NetworkConstants {
         }
     }
 }
-
 
 final class NetworkService: NetworkServiceProtocol {
     
@@ -227,7 +228,7 @@ final class NetworkService: NetworkServiceProtocol {
             jsonDict["element"] = json
             let body = try? JSONSerialization.data(withJSONObject: jsonDict)
             request.httpBody = body
-            request.url = URL(string: NetworkConstants.url + "/\(todoItem.id)")!
+            request.url = URL(string: NetworkConstants.url)!
             let task = session.dataTask(with: request) { data, response, error in
                 if error != nil {
                     DispatchQueue.main.async { completion(.failure(NetworkError.noInternet)) }
@@ -239,6 +240,42 @@ final class NetworkService: NetworkServiceProtocol {
                 }
                 
                 Logger.log("Successful: POST ITEM")
+                if let jsonArray = try? JSONSerialization.jsonObject(with: data) as? [String: Any],
+                   let revision = jsonArray["revision"] as? Int {
+                    NetworkConstants.revision = revision
+                    DispatchQueue.main.async { completion(.success(())) }} else {
+                        DispatchQueue.main.async { completion(.failure(NetworkError.serializationError)) }
+                    }
+            }
+            task.resume()
+        }
+    }
+    
+    func editTodoItem(todoItem: TodoItem, completion: @escaping (Result<Void, Error>) -> Void) {
+        queue.async { [self] in
+            guard var request = createRequest else {
+                completion(.failure(NetworkError.failedRequest))
+                return
+            }
+            request.httpMethod = "PUT"
+            request.url = URL(string: NetworkConstants.url + "/\(todoItem.id)")!
+            var jsonDict: [String: Any] = [:]
+            let json = todoItem.jsonToNetwork
+            jsonDict["element"] = json
+            let body = try? JSONSerialization.data(withJSONObject: jsonDict)
+            request.httpBody = body
+            request.url = URL(string: NetworkConstants.url)!
+            let task = session.dataTask(with: request) { data, response, error in
+                if error != nil {
+                    DispatchQueue.main.async { completion(.failure(NetworkError.noInternet)) }
+                    return
+                }
+                guard let data = data, !data.isEmpty else {
+                    DispatchQueue.main.async { completion(.failure(NetworkError.failedRequest)) }
+                    return
+                }
+                
+                Logger.log("Successful: PUT ITEM")
                 if let jsonArray = try? JSONSerialization.jsonObject(with: data) as? [String: Any],
                    let revision = jsonArray["revision"] as? Int {
                     NetworkConstants.revision = revision
