@@ -54,10 +54,14 @@ final class TodoItemService {
         self.network = network
     }
     
+    
     func load() {
         fileCache.load { result in
             switch result {
             case .success(let todoItems):
+                if todoItems.count == 0 {
+                    fallthrough              // !fallthrowing
+                }
                 self.todoItems = todoItems
             case .failure:
                 self.network.getAllTodoItems { [self] result in

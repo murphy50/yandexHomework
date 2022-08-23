@@ -66,7 +66,6 @@ final class MainViewController: UIViewController, TodoItemServiceDelegate {
         super.viewDidLoad()
         todoItemService.delegate = self
         todoItemService.load()
-        todoItemService.getElement(id: "aafa")
         configureNavbar()
         headerView = MainTableHeaderView(isShowAll: isShowAll, completedTasksNumber: todoItemService.completedTasks)
         
