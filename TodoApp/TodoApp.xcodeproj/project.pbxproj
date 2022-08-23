@@ -338,7 +338,6 @@
 				0DD390E82896D3B7008CD29E /* MainViewController.swift in Sources */,
 				0D4E494928A91F240053CD71 /* FileCacheService.swift in Sources */,
 				0DD390E42896D3B7008CD29E /* AppDelegate.swift in Sources */,
-				0DE1CCBF28B1448200A766EE /* Logger.swift in Sources */,
 				0DD390E62896D3B7008CD29E /* SceneDelegate.swift in Sources */,
 				0DD390FC28977BB5008CD29E /* TodoItemService.swift in Sources */,
 				0DD390F82896D3FF008CD29E /* DetailsViewController.swift in Sources */,
