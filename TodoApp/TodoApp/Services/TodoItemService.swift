@@ -16,14 +16,6 @@ final class TodoItemService {
     weak var delegate: TodoItemServiceDelegate?
     private(set) var todoItems: [String: TodoItem] = [:] {
         didSet {
-            network.createPatch(with: Array(todoItems.values)) { [self] result in
-                switch result {
-                case .success(_):
-                    isDirty = false
-                case .failure(_):
-                    isDirty = true
-                }
-            }
             delegate?.updateTodoItems()
             saveToDrive()
         }
@@ -55,20 +47,23 @@ final class TodoItemService {
     }
     
     func load() {
-        fileCache.load { result in
+        fileCache.load { [self] result in
             switch result {
             case .success(let todoItems):
                 if todoItems.isEmpty {
                     fallthrough              // !fallthrowing
                 }
                 self.todoItems = todoItems
+                isDirty = true
             case .failure:
                 self.network.getAllTodoItems { [self] result in
                     switch result {
                     case .success(let todoItems):
+                        var todoItemsDict: [String: TodoItem] = [:]
                         for item in todoItems {
-                            self.add(item)
+                            todoItemsDict[item.id] = item
                         }
+                        self.todoItems = todoItemsDict
                     case .failure(let error):
                         isDirty = true
                         print(error.localizedDescription)

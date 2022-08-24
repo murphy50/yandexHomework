@@ -9,7 +9,8 @@ import MyColors
 // MARK: - DetailsVCDelegate
 
 protocol DetailsViewControllerDelegate: AnyObject {
-    func toDoItemCreated(model: TodoItem, beingDeleted: Bool)
+    func returnTodoItem(model: TodoItem)
+    func todoItemDeleted(id: String)
 }
 
 // MARK: - DetailsViewController
@@ -29,7 +30,7 @@ final class DetailsViewController: UIViewController {
     
     private func configureNavbar() {
         navigationItem.title = "Задание"
-        let leftBarButton = UIBarButtonItem(title: "Отменить", style: .done, target: self, action: #selector(cancelCreationToDoItem))
+        let leftBarButton = UIBarButtonItem(title: "Отменить", style: .done, target: self, action: #selector(cancelDetailsViewController))
         let rightBarButton = UIBarButtonItem(title: "Сохранить", style: .done, target: self, action: #selector(saveToDoItem))
         navigationItem.leftBarButtonItem = leftBarButton
         navigationItem.rightBarButtonItem = rightBarButton
@@ -331,19 +332,19 @@ extension DetailsViewController: UITextViewDelegate {
 
 // MARK: - Actions
 
-extension DetailsViewController {
-    @objc private func onKeyboardAppear(_ notification: Notification) {
+private extension DetailsViewController {
+    @objc func onKeyboardAppear(_ notification: Notification) {
         if let keyboardSize = (notification.userInfo?[UIResponder.keyboardFrameEndUserInfoKey] as? NSValue)?.cgRectValue {
             scrollView.contentInset = .init(top: 0, left: 0, bottom: keyboardSize.height, right: 0)
         }
     }
     
-    @objc private func onKeyboardDisappear(_ notification: Notification) {
+    @objc func onKeyboardDisappear(_ notification: Notification) {
         scrollView.contentInset = .init(top: 0, left: 0, bottom: 0, right: 0)
     }
     
     @objc func deleteToDoItem() {
-        delegate?.toDoItemCreated(model: model, beingDeleted: true)
+        delegate?.todoItemDeleted(id: model.id)
         navigationController?.dismiss(animated: true)
     }
     @objc func dismissKeyboard() {
@@ -352,12 +353,20 @@ extension DetailsViewController {
     
     @objc func saveToDoItem() {
         textViewDidEndEditing(textView)
-        delegate?.toDoItemCreated(model: model, beingDeleted: beingDeleted)
+        model = TodoItem(id: model.id,
+                         text: model.text,
+                         importance: model.importance,
+                         deadline: model.deadline,
+                         done: model.done,
+                         color: model.color,
+                         creationDate: model.creationDate,
+                         changeDate: .now)
+        delegate?.returnTodoItem(model: model)
         navigationController?.dismiss(animated: true)
         
     }
     
-    @objc func cancelCreationToDoItem() {
+    @objc func cancelDetailsViewController() {
         navigationController?.dismiss(animated: true)
     }
     

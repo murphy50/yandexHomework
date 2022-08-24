@@ -250,7 +250,8 @@ final class NetworkService: NetworkServiceProtocol {
             task.resume()
         }
     }
-    
+    // MARK: - PUT ITEM
+
     func editTodoItem(todoItem: TodoItem, completion: @escaping (Result<Void, Error>) -> Void) {
         queue.async { [self] in
             guard var request = createRequest else {
@@ -259,8 +260,8 @@ final class NetworkService: NetworkServiceProtocol {
             }
             request.httpMethod = "PUT"
             request.url = URL(string: NetworkConstants.url + "/\(todoItem.id)")!
-            var jsonDict: [String: Any] = [:]
             let json = todoItem.jsonToNetwork
+            var jsonDict: [String: Any] = [:]
             jsonDict["element"] = json
             let body = try? JSONSerialization.data(withJSONObject: jsonDict)
             request.httpBody = body

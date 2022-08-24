@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		0D05F76128B59DC100C4F69B /* Date+Milliseconds.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0D05F76028B59DC100C4F69B /* Date+Milliseconds.swift */; };
 		0D4E494928A91F240053CD71 /* FileCacheService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0D4E494828A91F240053CD71 /* FileCacheService.swift */; };
 		0D4E494B28A920700053CD71 /* NetworkService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0D4E494A28A920700053CD71 /* NetworkService.swift */; };
 		0D5879F428B2A0F200B9038E /* testTodoInput3.json in Resources */ = {isa = PBXBuildFile; fileRef = 0D5879F328B2A0F200B9038E /* testTodoInput3.json */; };
@@ -36,6 +37,7 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		0D05F76028B59DC100C4F69B /* Date+Milliseconds.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Date+Milliseconds.swift"; sourceTree = "<group>"; };
 		0D4E494828A91F240053CD71 /* FileCacheService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FileCacheService.swift; sourceTree = "<group>"; };
 		0D4E494A28A920700053CD71 /* NetworkService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NetworkService.swift; sourceTree = "<group>"; };
 		0D5879F328B2A0F200B9038E /* testTodoInput3.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = testTodoInput3.json; sourceTree = "<group>"; };
@@ -78,6 +80,32 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		0D05F76228B59DDB00C4F69B /* Extensions */ = {
+			isa = PBXGroup;
+			children = (
+				0D05F76028B59DC100C4F69B /* Date+Milliseconds.swift */,
+			);
+			path = Extensions;
+			sourceTree = "<group>";
+		};
+		0D05F76328B59DFF00C4F69B /* Models */ = {
+			isa = PBXGroup;
+			children = (
+				0DD390F928971DA6008CD29E /* TodoItem.swift */,
+			);
+			path = Models;
+			sourceTree = "<group>";
+		};
+		0D05F76428B59E1200C4F69B /* Services */ = {
+			isa = PBXGroup;
+			children = (
+				0DD390FB28977BB5008CD29E /* TodoItemService.swift */,
+				0D4E494828A91F240053CD71 /* FileCacheService.swift */,
+				0D4E494A28A920700053CD71 /* NetworkService.swift */,
+			);
+			path = Services;
+			sourceTree = "<group>";
+		};
 		0DC13F2228A1A98D007DC04C /* Controllers */ = {
 			isa = PBXGroup;
 			children = (
@@ -123,10 +151,9 @@
 				0DD390E52896D3B7008CD29E /* SceneDelegate.swift */,
 				0DC13F2328A1A99D007DC04C /* Views */,
 				0DC13F2228A1A98D007DC04C /* Controllers */,
-				0DD390F928971DA6008CD29E /* TodoItem.swift */,
-				0DD390FB28977BB5008CD29E /* TodoItemService.swift */,
-				0D4E494828A91F240053CD71 /* FileCacheService.swift */,
-				0D4E494A28A920700053CD71 /* NetworkService.swift */,
+				0D05F76328B59DFF00C4F69B /* Models */,
+				0D05F76428B59E1200C4F69B /* Services */,
+				0D05F76228B59DDB00C4F69B /* Extensions */,
 				0DE1CCC828B1517C00A766EE /* Utilities */,
 				0DF4FA6D28A7F7EA00879E68 /* Assets.xcassets */,
 				0DD390F12896D3BA008CD29E /* Info.plist */,
@@ -344,6 +371,7 @@
 				0DD390E42896D3B7008CD29E /* AppDelegate.swift in Sources */,
 				0DD390E62896D3B7008CD29E /* SceneDelegate.swift in Sources */,
 				0DD390FC28977BB5008CD29E /* TodoItemService.swift in Sources */,
+				0D05F76128B59DC100C4F69B /* Date+Milliseconds.swift in Sources */,
 				0DD390F82896D3FF008CD29E /* DetailsViewController.swift in Sources */,
 				0DA99B21289EAD9700C01052 /* MainTableHeaderView.swift in Sources */,
 			);
