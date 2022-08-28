@@ -12,6 +12,7 @@
 		0D4E494B28A920700053CD71 /* NetworkService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0D4E494A28A920700053CD71 /* NetworkService.swift */; };
 		0D5879F428B2A0F200B9038E /* testTodoInput3.json in Resources */ = {isa = PBXBuildFile; fileRef = 0D5879F328B2A0F200B9038E /* testTodoInput3.json */; };
 		0D79B04328A2F24D00FCD0BB /* testTodoInput2.json in Resources */ = {isa = PBXBuildFile; fileRef = 0D79B04228A2F24D00FCD0BB /* testTodoInput2.json */; };
+		0DA0D3E528BBA7EC00106031 /* Importance.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0DA0D3E428BBA7EC00106031 /* Importance.swift */; };
 		0DA99B1F289E3F2A00C01052 /* MainTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0DA99B1E289E3F2900C01052 /* MainTableViewCell.swift */; };
 		0DA99B21289EAD9700C01052 /* MainTableHeaderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0DA99B20289EAD9700C01052 /* MainTableHeaderView.swift */; };
 		0DD390E42896D3B7008CD29E /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0DD390E32896D3B7008CD29E /* AppDelegate.swift */; };
@@ -43,6 +44,7 @@
 		0D4E494A28A920700053CD71 /* NetworkService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NetworkService.swift; sourceTree = "<group>"; };
 		0D5879F328B2A0F200B9038E /* testTodoInput3.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = testTodoInput3.json; sourceTree = "<group>"; };
 		0D79B04228A2F24D00FCD0BB /* testTodoInput2.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = testTodoInput2.json; sourceTree = "<group>"; };
+		0DA0D3E428BBA7EC00106031 /* Importance.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Importance.swift; sourceTree = "<group>"; };
 		0DA99B1E289E3F2900C01052 /* MainTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainTableViewCell.swift; sourceTree = "<group>"; };
 		0DA99B20289EAD9700C01052 /* MainTableHeaderView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainTableHeaderView.swift; sourceTree = "<group>"; };
 		0DD390E02896D3B7008CD29E /* TodoApp.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = TodoApp.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -95,6 +97,7 @@
 			isa = PBXGroup;
 			children = (
 				0DD390F928971DA6008CD29E /* TodoItem.swift */,
+				0DA0D3E428BBA7EC00106031 /* Importance.swift */,
 			);
 			path = Models;
 			sourceTree = "<group>";
@@ -103,8 +106,7 @@
 			isa = PBXGroup;
 			children = (
 				0DD390FB28977BB5008CD29E /* TodoItemService.swift */,
-				0D4E494828A91F240053CD71 /* FileCacheService.swift */,
-				0D4E494A28A920700053CD71 /* NetworkService.swift */,
+				0DCA927E28BC08BA0060D4FA /* TodoItemServices */,
 			);
 			path = Services;
 			sourceTree = "<group>";
@@ -125,6 +127,15 @@
 				0DA99B1E289E3F2900C01052 /* MainTableViewCell.swift */,
 			);
 			path = Views;
+			sourceTree = "<group>";
+		};
+		0DCA927E28BC08BA0060D4FA /* TodoItemServices */ = {
+			isa = PBXGroup;
+			children = (
+				0D4E494828A91F240053CD71 /* FileCacheService.swift */,
+				0D4E494A28A920700053CD71 /* NetworkService.swift */,
+			);
+			path = TodoItemServices;
 			sourceTree = "<group>";
 		};
 		0DD390D72896D3B7008CD29E = {
@@ -382,6 +393,7 @@
 				0D4E494928A91F240053CD71 /* FileCacheService.swift in Sources */,
 				0DD390E42896D3B7008CD29E /* AppDelegate.swift in Sources */,
 				0DD390E62896D3B7008CD29E /* SceneDelegate.swift in Sources */,
+				0DA0D3E528BBA7EC00106031 /* Importance.swift in Sources */,
 				0DD390FC28977BB5008CD29E /* TodoItemService.swift in Sources */,
 				0D05F76128B59DC100C4F69B /* Date+Milliseconds.swift in Sources */,
 				0DD390F82896D3FF008CD29E /* DetailsViewController.swift in Sources */,

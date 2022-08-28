@@ -13,11 +13,11 @@ final class TodoItemService {
     
     private var fileCache: FileCacheService
     private var network: NetworkService
+    
     weak var delegate: TodoItemServiceDelegate?
     private(set) var todoItems: [String: TodoItem] = [:] {
         didSet {
             delegate?.updateTodoItems()
-            saveToDrive()
         }
     }
     private var delay: Double = 2
@@ -41,45 +41,18 @@ final class TodoItemService {
         }
     }
     
-    init(_ fileCache: FileCacheService, _ network: NetworkService) {
-        self.fileCache = fileCache
-        self.network = network
+    init() {
+        fileCache = FileCacheService()
+        network = NetworkService()
     }
     
     func load() {
-        fileCache.load { [self] result in
+        fileCache.load { result in
             switch result {
             case .success(let todoItems):
-                if todoItems.isEmpty {
-                    fallthrough              // !fallthrowing
-                }
-                self.todoItems = todoItems
-                isDirty = true
-            case .failure:
-                self.network.getAllTodoItems { [self] result in
-                    switch result {
-                    case .success(let todoItems):
-                        var todoItemsDict: [String: TodoItem] = [:]
-                        for item in todoItems {
-                            todoItemsDict[item.id] = item
-                        }
-                        self.todoItems = todoItemsDict
-                    case .failure(let error):
-                        isDirty = true
-                        print(error.localizedDescription)
-                    }
-                }
-            }
-        }
-    }
-    
-    func saveToDrive() {
-        fileCache.save(todoItems: todoItems) { result in
-            switch result {
-            case .success:
-                Logger.log("Files were successfully written to disk")
+                self.todoItems = todoItems.toDictionary
             case .failure(let error):
-                print(error.localizedDescription)
+                print(error)
             }
         }
     }
@@ -96,37 +69,23 @@ final class TodoItemService {
         }
     }
     
-    func loadFromDrive() {
-        fileCache.load { result in
-            switch result {
-            case .success(let todoItems):
-                self.todoItems = todoItems
-            case .failure(let error):
-                print(error.localizedDescription)
-            }
-        }
-    }
-    
     func add(_ item: TodoItem) {
-        // FIXME: - change logic of .success
-        if todoItems.contains(where: { $0.value.id == item.id }) {
-            network.editTodoItem(todoItem: item) { result in
+        if todoItems[item.id] != nil {
+            fileCache.update(todoItem: item) { result in
                 switch result {
                 case .success:
-                    print("successfully editing")
+                    print("successfully updated")
                 case .failure(let error):
                     print(error.localizedDescription)
-                    self.isDirty = true
                 }
             }
         } else {
-            network.uploadTodoItem(todoItem: item) { result in
+            fileCache.insert(todoItem: item) { result in
                 switch result {
                 case .success:
-                    print("successfully editing")
+                    print("successfully inserted")
                 case .failure(let error):
                     print(error.localizedDescription)
-                    self.isDirty = true
                 }
             }
         }
@@ -148,5 +107,15 @@ final class TodoItemService {
     
     var completedTasks: Int {
         todoItems.filter({ $0.value.done }).count
+    }
+}
+
+extension Array where Element == TodoItem {
+    var toDictionary: [String: TodoItem] {
+        var dict: [String: TodoItem] = [:]
+        for item in self {
+            dict[item.id] = item
+        }
+        return dict
     }
 }

@@ -105,7 +105,7 @@ final class DetailsViewController: UIViewController {
     }()
     
     @objc func segmentedControlDidChange(target: UISegmentedControl) {
-        let importance: TodoItem.Importance
+        let importance: Importance
         switch target.selectedSegmentIndex {
         case 0: importance = .low
         case 2: importance = .important
@@ -243,7 +243,7 @@ extension DetailsViewController {
 
 private extension DetailsViewController {
     
-    func set(with importance: TodoItem.Importance) {
+    func set(with importance: Importance) {
         switch importance {
         case .important:
             segmentedControl.selectedSegmentIndex = 2
