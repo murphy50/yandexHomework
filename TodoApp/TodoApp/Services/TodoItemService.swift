@@ -57,18 +57,6 @@ final class TodoItemService {
         }
     }
     
-    func getElement(id: String) {
-        network.getTodoItem(at: id) { [self] result in
-            switch result {
-            case .success(let item):
-                print(item)
-            case .failure(let error):
-                isDirty = true
-                print(error)
-            }
-        }
-    }
-    
     func add(_ item: TodoItem) {
         if todoItems[item.id] != nil {
             fileCache.update(todoItem: item) { result in
@@ -94,28 +82,17 @@ final class TodoItemService {
     
     func delete(id itemID: String) {
         todoItems.removeValue(forKey: itemID)
-        network.deleteTodoItem(at: itemID) { result in
+        fileCache.delete(id: itemID) { result in
             switch result {
             case .success:
-                print("")
+                print("successfully deleted")
             case .failure(let error):
-                print(error)
-                self.isDirty = true
+                print(error.localizedDescription)
             }
         }
     }
     
     var completedTasks: Int {
         todoItems.filter({ $0.value.done }).count
-    }
-}
-
-extension Array where Element == TodoItem {
-    var toDictionary: [String: TodoItem] {
-        var dict: [String: TodoItem] = [:]
-        for item in self {
-            dict[item.id] = item
-        }
-        return dict
     }
 }
