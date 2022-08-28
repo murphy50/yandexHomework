@@ -24,6 +24,7 @@
 		0DD3910E2897AC7B008CD29E /* testTodoInput.json in Resources */ = {isa = PBXBuildFile; fileRef = 0DD3910D2897AC7B008CD29E /* testTodoInput.json */; };
 		0DE1CCC728B1510600A766EE /* Logger.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0DE1CCC628B1510600A766EE /* Logger.swift */; };
 		0DF4FA6E28A7F7EA00879E68 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 0DF4FA6D28A7F7EA00879E68 /* Assets.xcassets */; };
+		57C16F66466C347AD1C17F43 /* Pods_TodoApp.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 63AAD655BE3C40A63F1F0CEA /* Pods_TodoApp.framework */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -59,6 +60,7 @@
 		0DE1CCC628B1510600A766EE /* Logger.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Logger.swift; sourceTree = "<group>"; };
 		0DF4FA6D28A7F7EA00879E68 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		3D729D40D71D2F690F6AC7F8 /* Pods-TodoApp.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-TodoApp.release.xcconfig"; path = "Target Support Files/Pods-TodoApp/Pods-TodoApp.release.xcconfig"; sourceTree = "<group>"; };
+		63AAD655BE3C40A63F1F0CEA /* Pods_TodoApp.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_TodoApp.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		9234484ED9E130EFD77E611C /* Pods-TodoApp.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-TodoApp.debug.xcconfig"; path = "Target Support Files/Pods-TodoApp/Pods-TodoApp.debug.xcconfig"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -67,6 +69,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				57C16F66466C347AD1C17F43 /* Pods_TodoApp.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -132,6 +135,7 @@
 				0DD390E12896D3B7008CD29E /* Products */,
 				3798EE5B854D25ABD52E1E60 /* Pods */,
 				0DE1CCC328B14D1C00A766EE /* Recovered References */,
+				9B3C71F4420E7527DB57B04F /* Frameworks */,
 			);
 			sourceTree = "<group>";
 		};
@@ -195,6 +199,14 @@
 				3D729D40D71D2F690F6AC7F8 /* Pods-TodoApp.release.xcconfig */,
 			);
 			path = Pods;
+			sourceTree = "<group>";
+		};
+		9B3C71F4420E7527DB57B04F /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				63AAD655BE3C40A63F1F0CEA /* Pods_TodoApp.framework */,
+			);
+			name = Frameworks;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
