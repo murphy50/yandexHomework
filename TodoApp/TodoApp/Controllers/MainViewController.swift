@@ -8,7 +8,7 @@ import CellAnimator
 import MyColors
 
 final class MainViewController: UIViewController, TodoItemServiceDelegate {
-
+    
     // MARK: - Private properties
     
     private var todoItemService = TodoItemService(FileCacheService(), NetworkService())
@@ -22,7 +22,7 @@ final class MainViewController: UIViewController, TodoItemServiceDelegate {
         mainTable.reloadData()
         updateHeader()
     }
-
+    
     private func updateHeader() {
         if let headerView = headerView {
             headerView.configure(isShowAll: isShowAll, completedTasksNumber: todoItemService.completedTasks)
@@ -112,12 +112,13 @@ extension MainViewController: UITableViewDelegate, UITableViewDataSource {
         let action = UIContextualAction(style: .normal, title: nil) { [ weak self] _, _, _ in
             guard let item = self?.toDoItems[indexPath.row] else { return }
             self?.todoItemService.add(TodoItem(id: item.id,
-                                   text: item.text,
-                                   importance: item.importance, deadline: item.deadline,
-                                   done: true,
-                                   color: item.color,
-                                   creationDate: item.creationDate,
-                                   changeDate: item.changeDate))
+                                               text: item.text,
+                                               importance: item.importance,
+                                               deadline: item.deadline,
+                                               done: true,
+                                               color: item.color,
+                                               creationDate: item.creationDate,
+                                               changeDate: .now))
         }
         action.image = UIImage(systemName: "checkmark.circle.fill")
         action.backgroundColor = ColorPalette.green.color
@@ -205,14 +206,13 @@ extension MainViewController: UIViewControllerTransitioningDelegate {
 
 extension MainViewController: DetailsViewControllerDelegate {
     
-    func toDoItemCreated(model: TodoItem, beingDeleted: Bool) {
-        if beingDeleted {
-            todoItemService.delete(id: model.id)
-        } else {
-            todoItemService.add(model)
-        }
+    func returnTodoItem(model: TodoItem) {
+        todoItemService.add(model)
     }
-    
+
+    func todoItemDeleted(id: String) {
+        todoItemService.delete(id: id)
+    }
 }
 
 // MARK: - Private methods
@@ -224,7 +224,7 @@ private extension MainViewController {
             toDoItems = Array(todoItemService.todoItems.values.sorted { $0.creationDate < $1.creationDate})
         } else {
             let cleanDictionary = todoItemService.todoItems.values.filter({ todoItem in
-                !todoItem.done && !(todoItem.importance == .important)
+                !todoItem.done
             })
             toDoItems = cleanDictionary.sorted { $0.creationDate < $1.creationDate }
         }

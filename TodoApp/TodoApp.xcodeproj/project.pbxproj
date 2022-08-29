@@ -7,8 +7,10 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		0D05F76128B59DC100C4F69B /* Date+Milliseconds.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0D05F76028B59DC100C4F69B /* Date+Milliseconds.swift */; };
 		0D4E494928A91F240053CD71 /* FileCacheService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0D4E494828A91F240053CD71 /* FileCacheService.swift */; };
 		0D4E494B28A920700053CD71 /* NetworkService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0D4E494A28A920700053CD71 /* NetworkService.swift */; };
+		0D5879F428B2A0F200B9038E /* testTodoInput3.json in Resources */ = {isa = PBXBuildFile; fileRef = 0D5879F328B2A0F200B9038E /* testTodoInput3.json */; };
 		0D79B04328A2F24D00FCD0BB /* testTodoInput2.json in Resources */ = {isa = PBXBuildFile; fileRef = 0D79B04228A2F24D00FCD0BB /* testTodoInput2.json */; };
 		0DA99B1F289E3F2A00C01052 /* MainTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0DA99B1E289E3F2900C01052 /* MainTableViewCell.swift */; };
 		0DA99B21289EAD9700C01052 /* MainTableHeaderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0DA99B20289EAD9700C01052 /* MainTableHeaderView.swift */; };
@@ -35,8 +37,10 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		0D05F76028B59DC100C4F69B /* Date+Milliseconds.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Date+Milliseconds.swift"; sourceTree = "<group>"; };
 		0D4E494828A91F240053CD71 /* FileCacheService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FileCacheService.swift; sourceTree = "<group>"; };
 		0D4E494A28A920700053CD71 /* NetworkService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NetworkService.swift; sourceTree = "<group>"; };
+		0D5879F328B2A0F200B9038E /* testTodoInput3.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = testTodoInput3.json; sourceTree = "<group>"; };
 		0D79B04228A2F24D00FCD0BB /* testTodoInput2.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = testTodoInput2.json; sourceTree = "<group>"; };
 		0DA99B1E289E3F2900C01052 /* MainTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainTableViewCell.swift; sourceTree = "<group>"; };
 		0DA99B20289EAD9700C01052 /* MainTableHeaderView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainTableHeaderView.swift; sourceTree = "<group>"; };
@@ -76,6 +80,32 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		0D05F76228B59DDB00C4F69B /* Extensions */ = {
+			isa = PBXGroup;
+			children = (
+				0D05F76028B59DC100C4F69B /* Date+Milliseconds.swift */,
+			);
+			path = Extensions;
+			sourceTree = "<group>";
+		};
+		0D05F76328B59DFF00C4F69B /* Models */ = {
+			isa = PBXGroup;
+			children = (
+				0DD390F928971DA6008CD29E /* TodoItem.swift */,
+			);
+			path = Models;
+			sourceTree = "<group>";
+		};
+		0D05F76428B59E1200C4F69B /* Services */ = {
+			isa = PBXGroup;
+			children = (
+				0DD390FB28977BB5008CD29E /* TodoItemService.swift */,
+				0D4E494828A91F240053CD71 /* FileCacheService.swift */,
+				0D4E494A28A920700053CD71 /* NetworkService.swift */,
+			);
+			path = Services;
+			sourceTree = "<group>";
+		};
 		0DC13F2228A1A98D007DC04C /* Controllers */ = {
 			isa = PBXGroup;
 			children = (
@@ -121,15 +151,15 @@
 				0DD390E52896D3B7008CD29E /* SceneDelegate.swift */,
 				0DC13F2328A1A99D007DC04C /* Views */,
 				0DC13F2228A1A98D007DC04C /* Controllers */,
-				0DD390F928971DA6008CD29E /* TodoItem.swift */,
-				0DD390FB28977BB5008CD29E /* TodoItemService.swift */,
-				0D4E494828A91F240053CD71 /* FileCacheService.swift */,
-				0D4E494A28A920700053CD71 /* NetworkService.swift */,
+				0D05F76328B59DFF00C4F69B /* Models */,
+				0D05F76428B59E1200C4F69B /* Services */,
+				0D05F76228B59DDB00C4F69B /* Extensions */,
 				0DE1CCC828B1517C00A766EE /* Utilities */,
 				0DF4FA6D28A7F7EA00879E68 /* Assets.xcassets */,
 				0DD390F12896D3BA008CD29E /* Info.plist */,
 				0DD3910D2897AC7B008CD29E /* testTodoInput.json */,
 				0D79B04228A2F24D00FCD0BB /* testTodoInput2.json */,
+				0D5879F328B2A0F200B9038E /* testTodoInput3.json */,
 			);
 			path = TodoApp;
 			sourceTree = "<group>";
@@ -175,8 +205,8 @@
 			buildConfigurationList = 0DD390F42896D3BA008CD29E /* Build configuration list for PBXNativeTarget "TodoApp" */;
 			buildPhases = (
 				E0881391A15DD9180AA0CDFF /* [CP] Check Pods Manifest.lock */,
-				0D79B04428A6AE2B00FCD0BB /* Run SwiftLint */,
 				0DD390DC2896D3B7008CD29E /* Sources */,
+				0D05F75F28B534F800C4F69B /* SwiftLint */,
 				0DD390DD2896D3B7008CD29E /* Frameworks */,
 				0DD390DE2896D3B7008CD29E /* Resources */,
 				6D6CDE1C17AC49B3010B967C /* [CP] Embed Pods Frameworks */,
@@ -251,6 +281,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				0D5879F428B2A0F200B9038E /* testTodoInput3.json in Resources */,
 				0DD3910E2897AC7B008CD29E /* testTodoInput.json in Resources */,
 				0DF4FA6E28A7F7EA00879E68 /* Assets.xcassets in Resources */,
 				0D79B04328A2F24D00FCD0BB /* testTodoInput2.json in Resources */,
@@ -267,7 +298,7 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXShellScriptBuildPhase section */
-		0D79B04428A6AE2B00FCD0BB /* Run SwiftLint */ = {
+		0D05F75F28B534F800C4F69B /* SwiftLint */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -276,7 +307,7 @@
 			);
 			inputPaths = (
 			);
-			name = "Run SwiftLint";
+			name = SwiftLint;
 			outputFileListPaths = (
 			);
 			outputPaths = (
@@ -340,6 +371,7 @@
 				0DD390E42896D3B7008CD29E /* AppDelegate.swift in Sources */,
 				0DD390E62896D3B7008CD29E /* SceneDelegate.swift in Sources */,
 				0DD390FC28977BB5008CD29E /* TodoItemService.swift in Sources */,
+				0D05F76128B59DC100C4F69B /* Date+Milliseconds.swift in Sources */,
 				0DD390F82896D3FF008CD29E /* DetailsViewController.swift in Sources */,
 				0DA99B21289EAD9700C01052 /* MainTableHeaderView.swift in Sources */,
 			);
