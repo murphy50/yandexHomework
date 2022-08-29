@@ -24,7 +24,7 @@ struct Constants {
 
 class FileCacheService: FileCacheServiceProtocol {
     
-    private let queue = DispatchQueue(label: "fileCacheServiceQueue")
+    private let queue = DispatchQueue(label: "ru.murphy.toDoApp.fileCacheServiceQueue")
     
     func save(to file: String = Constants.testFile,
               todoItems: [String: TodoItem],
@@ -70,7 +70,10 @@ class FileCacheService: FileCacheServiceProtocol {
                     completion(.failure(FileCacheError.incorrectData))
                 }
             }
-            guard let correctData = data else { return }
+            guard let correctData = data else {
+                completion(.failure(FileCacheError.incorrectData))
+                return
+            }
             do {
                 if let jsonArray = try JSONSerialization.jsonObject(with: correctData) as? [Any] {
                     var toDoItems: [String: TodoItem] = [:]

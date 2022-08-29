@@ -20,6 +20,26 @@ final class TodoItemService {
             saveToDrive()
         }
     }
+    private var delay: Double = 2
+    private var factor: Double = 1.5
+    private var maxDelay: Double = 120
+    private var isDirty: Bool = false {
+        didSet {
+            if isDirty == true {
+                network.createPatch(with: Array(todoItems.values), delay: delay) { [self] result in
+                    print(result, delay )
+                    switch result {
+                    case .success(_):
+                        delay = 2
+                        isDirty = false
+                    case .failure(_):
+                        delay = min(delay * factor, maxDelay) + Double.random(in: 0...0.05)
+                        isDirty = true
+                    }
+                }
+            }
+        }
+    }
     
     init(_ fileCache: FileCacheService, _ network: NetworkService) {
         self.fileCache = fileCache
@@ -27,19 +47,25 @@ final class TodoItemService {
     }
     
     func load() {
-        fileCache.load { result in
+        fileCache.load { [self] result in
             switch result {
             case .success(let todoItems):
-                print("hello")
-                // self.todoItems = todoItems
+                if todoItems.isEmpty {
+                    fallthrough              // !fallthrowing
+                }
+                self.todoItems = todoItems
+                isDirty = true
             case .failure:
-                self.network.getAllTodoItems { result in
+                self.network.getAllTodoItems { [self] result in
                     switch result {
                     case .success(let todoItems):
+                        var todoItemsDict: [String: TodoItem] = [:]
                         for item in todoItems {
-                            self.add(item)
+                            todoItemsDict[item.id] = item
                         }
+                        self.todoItems = todoItemsDict
                     case .failure(let error):
+                        isDirty = true
                         print(error.localizedDescription)
                     }
                 }
@@ -59,11 +85,12 @@ final class TodoItemService {
     }
     
     func getElement(id: String) {
-        network.getTodoItem(at: id) { result in
+        network.getTodoItem(at: id) { [self] result in
             switch result {
             case .success(let item):
                 print(item)
             case .failure(let error):
+                isDirty = true
                 print(error)
             }
         }
@@ -79,16 +106,31 @@ final class TodoItemService {
             }
         }
     }
+    
     func add(_ item: TodoItem) {
-        todoItems[item.id] = item
-        network.uploadTodoItem(todoItem: item) { result in
-            switch result {
-            case .success:
-                print("success upload")
-            case .failure(let error):
-                print(error.localizedDescription)
+        // FIXME: - change logic of .success
+        if todoItems.contains(where: { $0.value.id == item.id }) {
+            network.editTodoItem(todoItem: item) { result in
+                switch result {
+                case .success:
+                    print("successfully editing")
+                case .failure(let error):
+                    print(error.localizedDescription)
+                    self.isDirty = true
+                }
+            }
+        } else {
+            network.uploadTodoItem(todoItem: item) { result in
+                switch result {
+                case .success:
+                    print("successfully editing")
+                case .failure(let error):
+                    print(error.localizedDescription)
+                    self.isDirty = true
+                }
             }
         }
+        todoItems[item.id] = item
     }
     
     func delete(id itemID: String) {
@@ -99,6 +141,7 @@ final class TodoItemService {
                 print("")
             case .failure(let error):
                 print(error)
+                self.isDirty = true
             }
         }
     }
