@@ -7,9 +7,6 @@ import Foundation
 import MyColors
 
 struct TodoItem {
-    enum Importance: String {
-        case low, basic, important
-    }
     let id: String
     let text: String
     let importance: Importance

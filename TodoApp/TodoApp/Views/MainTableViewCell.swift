@@ -11,7 +11,7 @@ final class MainTableViewCell: UITableViewCell {
     // MARK: - Public property
     static let identifier = "MainTableViewCell"
     var isDone: Bool = false
-    var itemImportance: TodoItem.Importance = .basic
+    var itemImportance: Importance = .basic
     
     // MARK: - Private property
     

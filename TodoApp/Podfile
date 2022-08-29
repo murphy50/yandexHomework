@@ -5,6 +5,7 @@ target 'TodoApp' do
   use_frameworks!
   pod 'CocoaLumberjack/Swift'
   pod 'SwiftLint'
+  pod 'SQLite.swift', '~> 0.13.3'
   pod 'CellAnimator', :path => 'TodoApp/CellAnimator'
   pod 'MyColors', :path => 'TodoApp/MyColors'
 end

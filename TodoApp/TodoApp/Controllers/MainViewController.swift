@@ -11,7 +11,7 @@ final class MainViewController: UIViewController, TodoItemServiceDelegate {
     
     // MARK: - Private properties
     
-    private var todoItemService = TodoItemService(FileCacheService(), NetworkService())
+    private var todoItemService = TodoItemService()
     private var toDoItems: [TodoItem] = []
     private var tapIndex: IndexPath?
     private var isShowAll: Bool = false
